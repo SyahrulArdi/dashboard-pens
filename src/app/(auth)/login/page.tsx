@@ -38,16 +38,16 @@ export default function LoginPage() {
         description: "Identitas atau Password salah. Silakan coba lagi.",
       });
     } else {
-      // Paksa ambil sesi terbaru agar tidak kena cache
-      const res = await fetch('/api/auth/session', { cache: 'no-store' });
-      const session = await res.json();
-      const role = session?.user?.role;
+      const { getSession } = await import("next-auth/react");
+      const session = await getSession();
+      const role = session?.user?.role as string | undefined;
 
       if (!role) {
+        setLoading(false);
         toast({
           variant: "destructive",
-          title: "Role Tidak Ditemukan",
-          description: `Sesi terdeteksi: ${JSON.stringify(session)}. Hubungi Admin.`,
+          title: "Sesi Gagal",
+          description: `Role tidak ditemukan. Sesi: ${JSON.stringify(session)}`,
         });
         return;
       }
