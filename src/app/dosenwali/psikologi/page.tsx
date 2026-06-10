@@ -8,15 +8,14 @@ export const dynamic = "force-dynamic";
 
 export default async function PsikologiPage() {
   const session = await getServerSession(authOptions);
-  
-  const userRoles = (session?.user as any)?.roles || {};
-  const dosenUser = userRoles["dosen_wali"];
+  const role = (session?.user as any)?.role;
+  const userId = (session?.user as any)?.id;
 
-  if (!dosenUser) {
+  if (!session || role !== "dosen_wali") {
     redirect("/login");
   }
 
-  const dosenId = dosenUser.id;
+  const dosenId = userId;
   const mahasiswa = await getMahasiswaBinaan(dosenId);
 
   return (

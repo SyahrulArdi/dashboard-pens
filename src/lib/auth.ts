@@ -9,121 +9,92 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email", placeholder: "Masukkan Email Anda" },
         password: { label: "Password", type: "password" },
-        existingRoles: { label: "Existing Roles", type: "text" }
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const { email, password } = credentials;
-        const lowerEmail = email.toLowerCase();
-
-        console.log("[AUTH] Attempt login:", lowerEmail);
-
-        let existingRoles: Record<string, any> = {};
-        if (credentials?.existingRoles) {
-          try {
-            existingRoles = JSON.parse(credentials.existingRoles);
-          } catch (e) {
-            console.error("[AUTH] Gagal parse existingRoles", e);
-          }
-        }
-
-        const createMergedUser = (user: any, roleKey: string) => {
-          existingRoles[roleKey] = {
-            id: user.id,
-            email: user.email,
-            name: user.nama || user.name,
-            role: roleKey
-          };
-          return {
-            ...existingRoles[roleKey],
-            roles: existingRoles
-          };
-        };
+        const email = credentials.email.toLowerCase().trim();
+        const password = credentials.password;
 
         // 1. Cek Admin (@admin.pens.ac.id)
-        if (lowerEmail.endsWith("@admin.pens.ac.id")) {
-          const { data: admin, error } = await supabaseAdmin
+        if (email.endsWith("@admin.pens.ac.id")) {
+          const { data: admin } = await supabaseAdmin
             .from("admin")
-            .select("*")
-            .eq("email", lowerEmail)
+            .select("id, email, nama, password_hash")
+            .eq("email", email)
             .single();
-          
-          if (admin && (password === "password" || password === admin.password_hash)) {
-            return createMergedUser(admin, "admin");
+
+          if (admin && password === admin.password_hash) {
+            return { id: admin.id, name: admin.nama, email: admin.email, role: "admin" };
           }
           return null;
         }
 
-        // 2. Cek Mahasiswa (semua subdomain student.pens.ac.id, misal @it.student.pens.ac.id)
-        if (lowerEmail.includes("student.pens.ac.id")) {
-          const { data: mhs, error } = await supabaseAdmin
+        // 2. Cek Mahasiswa (@*.student.pens.ac.id)
+        if (email.includes("student.pens.ac.id")) {
+          const { data: mhs } = await supabaseAdmin
             .from("mahasiswa")
-            .select("*")
-            .eq("email", lowerEmail)
+            .select("id, email, nama, password_hash")
+            .eq("email", email)
             .single();
-          
-          if (mhs && (password === "password" || password === mhs.password_hash)) {
-            return createMergedUser(mhs, "mahasiswa");
+
+          if (mhs && password === mhs.password_hash) {
+            return { id: mhs.id, name: mhs.nama, email: mhs.email, role: "mahasiswa" };
           }
           return null;
         }
 
         // 3. Cek PPKS (@ppks.pens.ac.id)
-        if (lowerEmail.endsWith("@ppks.pens.ac.id")) {
-          const { data: ppks, error } = await supabaseAdmin
+        if (email.endsWith("@ppks.pens.ac.id")) {
+          const { data: ppks } = await supabaseAdmin
             .from("ppks")
-            .select("*")
-            .eq("email", lowerEmail)
+            .select("id, email, nama, password_hash")
+            .eq("email", email)
             .single();
-          
-          if (ppks && (password === "password" || password === ppks.password_hash)) {
-            return createMergedUser(ppks, "ppks");
+
+          if (ppks && password === ppks.password_hash) {
+            return { id: ppks.id, name: ppks.nama, email: ppks.email, role: "ppks" };
           }
           return null;
         }
 
-        // 4. Cek Dosen Wali (@pens.ac.id)
-        if (lowerEmail.endsWith("@pens.ac.id")) {
-          const { data: dosen, error } = await supabaseAdmin
+        // 4. Cek Dosen Wali (@pens.ac.id) — harus paling akhir karena lebih umum
+        if (email.endsWith("@pens.ac.id")) {
+          const { data: dosen } = await supabaseAdmin
             .from("dosen_wali")
-            .select("*")
-            .eq("email", lowerEmail)
+            .select("id, email, nama, password_hash")
+            .eq("email", email)
             .single();
-          
-          if (dosen && (password === "password" || password === dosen.password_hash)) {
-            return createMergedUser(dosen, "dosen_wali");
+
+          if (dosen && password === dosen.password_hash) {
+            return { id: dosen.id, name: dosen.nama, email: dosen.email, role: "dosen_wali" };
           }
           return null;
         }
 
-        console.log("[AUTH] Domain tidak dikenali atau salah kredensial:", lowerEmail);
-        return null; // Domain tidak dikenali atau salah password
+        return null;
       }
     })
   ],
   callbacks: {
     async jwt({ token, user }) {
+      // Saat pertama login, user tersedia — simpan id dan role ke token
       if (user) {
         token.id = user.id;
-        token.email = user.email;
         token.role = (user as any).role;
-        token.roles = (user as any).roles;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        (session.user as any).id = token.id as string;
-        session.user.email = token.email as string;
-        (session.user as any).role = token.role as string;
-        (session.user as any).roles = token.roles || {};
+      if (session.user) {
+        (session.user as any).id = token.id;
+        (session.user as any).role = token.role;
       }
       return session;
     }
   },
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
   session: {
     strategy: "jwt",

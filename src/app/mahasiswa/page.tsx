@@ -8,15 +8,14 @@ export const dynamic = "force-dynamic";
 
 export default async function MahasiswaDashboard() {
   const session = await getServerSession(authOptions);
-  
-  const userRoles = (session?.user as any)?.roles || {};
-  const mhsUser = userRoles["mahasiswa"];
-  
-  if (!mhsUser) {
+  const role = (session?.user as any)?.role;
+  const userId = (session?.user as any)?.id;
+
+  if (!session || role !== "mahasiswa") {
     redirect("/login");
   }
 
-  const mahasiswaId = mhsUser.id;
+  const mahasiswaId = userId;
 
   const [profil, nilai, presensi, krs] = await Promise.all([
     getProfilMahasiswa(mahasiswaId),

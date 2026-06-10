@@ -1,10 +1,8 @@
 "use client";
 
 import Image from "next/image";
-
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +11,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
-  const router = useRouter();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,16 +21,10 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
-    // Ambil sesi yang sedang aktif (untuk fitur multi-role)
-    const { getSession } = await import("next-auth/react");
-    const currentSession = await getSession();
-    const existingRoles = (currentSession?.user as any)?.roles || {};
-
     const result = await signIn("credentials", {
       redirect: false,
-      email,
+      email: email.trim(),
       password,
-      existingRoles: JSON.stringify(existingRoles),
     });
 
     if (result?.error) {
@@ -41,44 +32,32 @@ export default function LoginPage() {
       toast({
         variant: "destructive",
         title: "Login Gagal",
-        description: "Identitas atau Password salah. Silakan coba lagi.",
+        description: "Email atau Password salah. Silakan coba lagi.",
       });
       return;
     }
 
-    // Login berhasil — tentukan role dari email
-    // Gunakan email input langsung karena session baru mungkin belum tersedia di client
-    const lowerEmail = email.toLowerCase();
-    let targetRole = "";
+    // Login berhasil — tentukan target dashboard dari email
+    const lowerEmail = email.toLowerCase().trim();
+    let targetUrl = "/";
 
     if (lowerEmail.endsWith("@admin.pens.ac.id")) {
-      targetRole = "admin";
+      targetUrl = "/admin";
     } else if (lowerEmail.includes("student.pens.ac.id")) {
-      targetRole = "mahasiswa";
+      targetUrl = "/mahasiswa";
     } else if (lowerEmail.endsWith("@ppks.pens.ac.id")) {
-      targetRole = "ppks";
+      targetUrl = "/ppks";
     } else if (lowerEmail.endsWith("@pens.ac.id")) {
-      targetRole = "dosen_wali";
+      targetUrl = "/dosenwali";
     }
 
     toast({
       title: "Login Berhasil",
-      description: `Mengarahkan ke dasbor...`,
+      description: "Mengarahkan ke dashboard...",
     });
 
-    // Gunakan window.location.href untuk navigasi penuh
-    // agar cookie JWT terbaru terbaca oleh middleware
-    if (targetRole === "admin") {
-      window.location.href = "/admin";
-    } else if (targetRole === "dosen_wali") {
-      window.location.href = "/dosenwali";
-    } else if (targetRole === "mahasiswa") {
-      window.location.href = "/mahasiswa";
-    } else if (targetRole === "ppks") {
-      window.location.href = "/ppks";
-    } else {
-      window.location.href = "/";
-    }
+    // Full page navigation agar cookie JWT terbaca middleware
+    window.location.assign(targetUrl);
   };
 
   return (

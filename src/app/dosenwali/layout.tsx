@@ -45,7 +45,6 @@ const navItems = [
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { data: session } = useSession();
-  const dosenUser = (session?.user as any)?.roles?.["dosen_wali"];
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -258,11 +257,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 pl-4 md:pl-6 border-l border-slate-200 dark:border-slate-700 outline-none">
                   <div className="text-right hidden md:block">
-                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{dosenUser?.name || "Dosen Wali"}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{dosenUser?.email || "dosen@pens.ac.id"}</p>
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">{session?.user?.name || "Dosen Wali"}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{session?.user?.email || "dosen@pens.ac.id"}</p>
                   </div>
                   <div className="h-10 w-10 bg-gradient-to-tr from-blue-600 to-indigo-500 text-white rounded-full flex items-center justify-center font-bold shadow-md border-2 border-white dark:border-slate-800 flex-shrink-0">
-                    {dosenUser?.name?.charAt(0) || "D"}
+                    {session?.user?.name?.charAt(0) || "D"}
                   </div>
                 </button>
               </DropdownMenuTrigger>
