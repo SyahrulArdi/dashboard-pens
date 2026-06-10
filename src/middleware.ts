@@ -10,25 +10,25 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  const role = token.role as string;
+  const roles = (token.roles as Record<string, any>) || {};
 
   // Proteksi rute admin
-  if (path.startsWith("/admin") && role !== "admin") {
+  if (path.startsWith("/admin") && !roles["admin"]) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   // Proteksi rute dosen wali
-  if (path.startsWith("/dosenwali") && role !== "dosen_wali") {
+  if (path.startsWith("/dosenwali") && !roles["dosen_wali"]) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   // Proteksi rute mahasiswa
-  if (path.startsWith("/mahasiswa") && role !== "mahasiswa") {
+  if (path.startsWith("/mahasiswa") && !roles["mahasiswa"]) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   // Proteksi rute ppks
-  if (path.startsWith("/ppks") && role !== "ppks") {
+  if (path.startsWith("/ppks") && !roles["ppks"]) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

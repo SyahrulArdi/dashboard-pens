@@ -1,22 +1,36 @@
-"use client";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import MahasiswaDashboardClient from "./_components/MahasiswaDashboardClient";
+import { getProfilMahasiswa, getNilaiMahasiswa, getPresensiMahasiswa, getRiwayatKRS } from "./actions";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+export const dynamic = "force-dynamic";
 
-export default function MahasiswaDashboard() {
+export default async function MahasiswaDashboard() {
+  const session = await getServerSession(authOptions);
+  
+  const userRoles = (session?.user as any)?.roles || {};
+  const mhsUser = userRoles["mahasiswa"];
+  
+  if (!mhsUser) {
+    redirect("/login");
+  }
+
+  const mahasiswaId = mhsUser.id;
+
+  const [profil, nilai, presensi, krs] = await Promise.all([
+    getProfilMahasiswa(mahasiswaId),
+    getNilaiMahasiswa(mahasiswaId),
+    getPresensiMahasiswa(mahasiswaId),
+    getRiwayatKRS(mahasiswaId),
+  ]);
+
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Akademik Mahasiswa</h2>
-        <p className="text-slate-500">Pantau nilai, kehadiran, dan ajukan KRS.</p>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Fitur Segera Datang</CardTitle>
-        </CardHeader>
-        <CardContent>
-          Halaman ini akan menampilkan histori akademik dan form pengajuan persetujuan KRS ke Dosen Wali.
-        </CardContent>
-      </Card>
-    </div>
+    <MahasiswaDashboardClient 
+      profil={profil}
+      nilai={nilai}
+      presensi={presensi}
+      krs={krs}
+    />
   );
 }

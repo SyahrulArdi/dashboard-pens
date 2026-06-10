@@ -40,7 +40,7 @@ export default function GrafikPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
@@ -65,7 +65,7 @@ export default function GrafikPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <Card className="shadow-sm">
+        <Card className="shadow-sm glass-panel border-none">
           <CardHeader>
             <CardTitle>Tren IPK per Semester</CardTitle>
             <CardDescription>Grafik pergerakan nilai IPK secara individual.</CardDescription>
@@ -91,7 +91,7 @@ export default function GrafikPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-sm glass-panel border-none">
           <CardHeader>
             <CardTitle>Distribusi Nilai (Semester Berjalan)</CardTitle>
             <CardDescription>Jumlah perolehan nilai huruf pada semester saat ini.</CardDescription>

@@ -24,10 +24,15 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
+    const { getSession } = await import("next-auth/react");
+    const currentSession = await getSession();
+    const existingRoles = (currentSession?.user as any)?.roles || {};
+
     const result = await signIn("credentials", {
       redirect: false,
       email,
       password,
+      existingRoles: JSON.stringify(existingRoles),
     });
 
     if (result?.error) {
@@ -40,7 +45,7 @@ export default function LoginPage() {
     } else {
       const { getSession } = await import("next-auth/react");
       const session = await getSession();
-      const role = session?.user?.role as string | undefined;
+      const role = (session?.user as any)?.role as string | undefined;
 
       if (!role) {
         setLoading(false);

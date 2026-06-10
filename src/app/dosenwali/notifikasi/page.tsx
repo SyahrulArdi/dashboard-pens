@@ -41,7 +41,7 @@ export default function NotifikasiPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto animate-fade-in">
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100 flex items-center gap-2">
           <Bell className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -54,7 +54,7 @@ export default function NotifikasiPage() {
         {notifs.map((notif) => (
           <Card 
             key={notif.id} 
-            className={`transition-all duration-200 ${notif.status === 'BARU' ? 'border-l-4 border-l-blue-500 bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
+            className={`transition-all duration-300 glass-card border-none ${notif.status === 'BARU' ? 'border-l-4 border-l-blue-500 bg-white/60 dark:bg-slate-900/60 shadow-md' : ''}`}
             onMouseEnter={() => markAsRead(notif.id)}
           >
             <CardHeader className="pb-2">
@@ -95,9 +95,9 @@ export default function NotifikasiPage() {
                     if (open) setSelectedId(notif.id);
                   }}>
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm">Tindak Lanjuti</Button>
+                      <Button variant="outline" size="sm" className="glass-card">Tindak Lanjuti</Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="glass-panel border-none">
                       <DialogHeader>
                         <DialogTitle>Tindak Lanjut Notifikasi</DialogTitle>
                         <DialogDescription>

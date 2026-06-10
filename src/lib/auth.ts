@@ -8,7 +8,8 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email", placeholder: "Masukkan Email Anda" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
+        existingRoles: { label: "Existing Roles", type: "text" }
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
@@ -18,6 +19,28 @@ export const authOptions: NextAuthOptions = {
 
         console.log("[AUTH] Attempt login:", lowerEmail);
 
+        let existingRoles: Record<string, any> = {};
+        if (credentials?.existingRoles) {
+          try {
+            existingRoles = JSON.parse(credentials.existingRoles);
+          } catch (e) {
+            console.error("[AUTH] Gagal parse existingRoles", e);
+          }
+        }
+
+        const createMergedUser = (user: any, roleKey: string) => {
+          existingRoles[roleKey] = {
+            id: user.id,
+            email: user.email,
+            name: user.nama || user.name,
+            role: roleKey
+          };
+          return {
+            ...existingRoles[roleKey],
+            roles: existingRoles
+          };
+        };
+
         // 1. Cek Admin (@admin.pens.ac.id)
         if (lowerEmail.endsWith("@admin.pens.ac.id")) {
           const { data: admin, error } = await supabaseAdmin
@@ -26,13 +49,9 @@ export const authOptions: NextAuthOptions = {
             .eq("email", lowerEmail)
             .single();
           
-          console.log("[AUTH] Admin query result:", admin, "Error:", error);
-          
           if (admin && (password === "password" || password === admin.password_hash)) {
-            console.log("[AUTH] Admin login SUCCESS");
-            return { id: admin.id, name: admin.nama, email: admin.email, role: "admin" };
+            return createMergedUser(admin, "admin");
           }
-          console.log("[AUTH] Admin login FAILED - password mismatch or not found");
           return null;
         }
 
@@ -44,10 +63,8 @@ export const authOptions: NextAuthOptions = {
             .eq("email", lowerEmail)
             .single();
           
-          console.log("[AUTH] Mahasiswa query result:", mhs, "Error:", error);
-          
           if (mhs && (password === "password" || password === mhs.password_hash)) {
-            return { id: mhs.id, name: mhs.nama, email: mhs.email, role: "mahasiswa" };
+            return createMergedUser(mhs, "mahasiswa");
           }
           return null;
         }
@@ -60,10 +77,8 @@ export const authOptions: NextAuthOptions = {
             .eq("email", lowerEmail)
             .single();
           
-          console.log("[AUTH] PPKS query result:", ppks, "Error:", error);
-          
           if (ppks && (password === "password" || password === ppks.password_hash)) {
-            return { id: ppks.id, name: ppks.nama, email: ppks.email, role: "ppks" };
+            return createMergedUser(ppks, "ppks");
           }
           return null;
         }
@@ -76,15 +91,13 @@ export const authOptions: NextAuthOptions = {
             .eq("email", lowerEmail)
             .single();
           
-          console.log("[AUTH] Dosen query result:", dosen, "Error:", error);
-          
           if (dosen && (password === "password" || password === dosen.password_hash)) {
-            return { id: dosen.id, name: dosen.nama, email: dosen.email, role: "dosen_wali" };
+            return createMergedUser(dosen, "dosen_wali");
           }
           return null;
         }
 
-        console.log("[AUTH] Domain tidak dikenali:", lowerEmail);
+        console.log("[AUTH] Domain tidak dikenali atau salah kredensial:", lowerEmail);
         return null; // Domain tidak dikenali atau salah password
       }
     })
@@ -94,15 +107,17 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        token.role = (user as { role?: string }).role;
+        token.role = (user as any).role;
+        token.roles = (user as any).roles;
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        (session.user as { id?: string }).id = token.id as string;
+        (session.user as any).id = token.id as string;
         session.user.email = token.email as string;
-        (session.user as { role?: string }).role = token.role as string;
+        (session.user as any).role = token.role as string;
+        (session.user as any).roles = token.roles || {};
       }
       return session;
     }
