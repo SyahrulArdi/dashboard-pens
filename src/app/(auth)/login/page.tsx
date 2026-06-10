@@ -24,6 +24,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
+    // Ambil sesi yang sedang aktif (untuk fitur multi-role)
     const { getSession } = await import("next-auth/react");
     const currentSession = await getSession();
     const existingRoles = (currentSession?.user as any)?.roles || {};
@@ -42,40 +43,41 @@ export default function LoginPage() {
         title: "Login Gagal",
         description: "Identitas atau Password salah. Silakan coba lagi.",
       });
+      return;
+    }
+
+    // Login berhasil — tentukan role dari email
+    // Gunakan email input langsung karena session baru mungkin belum tersedia di client
+    const lowerEmail = email.toLowerCase();
+    let targetRole = "";
+
+    if (lowerEmail.endsWith("@admin.pens.ac.id")) {
+      targetRole = "admin";
+    } else if (lowerEmail.includes("student.pens.ac.id")) {
+      targetRole = "mahasiswa";
+    } else if (lowerEmail.endsWith("@ppks.pens.ac.id")) {
+      targetRole = "ppks";
+    } else if (lowerEmail.endsWith("@pens.ac.id")) {
+      targetRole = "dosen_wali";
+    }
+
+    toast({
+      title: "Login Berhasil",
+      description: `Mengarahkan ke dasbor...`,
+    });
+
+    // Gunakan window.location.href untuk navigasi penuh
+    // agar cookie JWT terbaru terbaca oleh middleware
+    if (targetRole === "admin") {
+      window.location.href = "/admin";
+    } else if (targetRole === "dosen_wali") {
+      window.location.href = "/dosenwali";
+    } else if (targetRole === "mahasiswa") {
+      window.location.href = "/mahasiswa";
+    } else if (targetRole === "ppks") {
+      window.location.href = "/ppks";
     } else {
-      const { getSession } = await import("next-auth/react");
-      const session = await getSession();
-      const role = (session?.user as any)?.role as string | undefined;
-
-      if (!role) {
-        setLoading(false);
-        toast({
-          variant: "destructive",
-          title: "Sesi Gagal",
-          description: `Role tidak ditemukan. Sesi: ${JSON.stringify(session)}`,
-        });
-        return;
-      }
-
-      toast({
-        title: "Login Berhasil",
-        description: `Mengarahkan ke dasbor ${role}...`,
-      });
-
-      if (role === 'admin') {
-        router.push("/admin");
-      } else if (role === 'dosen_wali') {
-        router.push("/dosenwali");
-      } else if (role === 'mahasiswa') {
-        router.push("/mahasiswa");
-      } else if (role === 'ppks') {
-        router.push("/ppks");
-      } else {
-        // Jika role tidak ditemukan, redirect ke halaman utama dan refresh
-        window.location.href = "/";
-      }
-      
-      router.refresh();
+      window.location.href = "/";
     }
   };
 
