@@ -10,7 +10,6 @@ import {
   Menu,
   X,
   LogOut,
-  University,
   Search,
   Bell
 } from "lucide-react";

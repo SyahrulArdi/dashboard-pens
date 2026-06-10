@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { addDosenWali, deleteDosenWali } from "../actions";
 
 export default function DosenTab({ initialData }: { initialData: any[] }) {
-  const [data, setData] = useState(initialData);
+  const [data, _setData] = useState(initialData);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();

@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { addJadwalKuliah, deleteJadwalKuliah } from "../actions";
 
 export default function JadwalTab({ initialData, mataKuliahOptions, dosenOptions }: { initialData: any[], mataKuliahOptions: any[], dosenOptions: any[] }) {
-  const [data, setData] = useState(initialData);
+  const [data, _setData] = useState(initialData);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
