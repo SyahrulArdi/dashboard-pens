@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(req: NextRequest) {
+  // Fix: Explicitly set secureCookie on production environments (Vercel)
+  // because getToken might fail to find the __Secure-next-auth.session-token
+  const secureCookie = process.env.NODE_ENV === "production" || process.env.NEXT_PUBLIC_VERCEL_ENV === "production";
+  
   const token = await getToken({
     req,
     secret: process.env.NEXTAUTH_SECRET,
+    secureCookie,
   });
 
   const path = req.nextUrl.pathname;
