@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // 4. Cek Dosen Wali (@pens.ac.id) — harus paling akhir karena lebih umum
+        // 4. Cek Dosen Wali (@pens.ac.id) â€” harus paling akhir karena lebih umum
         if (email.endsWith("@pens.ac.id")) {
           const { data: dosen } = await supabaseAdmin
             .from("dosen_wali")
@@ -78,7 +78,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // Saat pertama login, user tersedia — simpan id dan role ke token
+      // Saat pertama login, user tersedia â€” simpan id dan role ke token
       if (user) {
         token.id = user.id;
         token.role = (user as any).role;
@@ -98,7 +98,7 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 hari
+    maxAge: 24 * 60 * 60, // Sesi login dijamin aktif selama 24 jam
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

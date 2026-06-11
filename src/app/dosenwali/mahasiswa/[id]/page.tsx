@@ -1,222 +1,270 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
-import { siaClient } from "@/lib/sia";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
+import { getDetailMahasiswaLengkap } from "../../actions";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { Badge } from "@/components/ui/badge";
-import { User, BookOpen, AlertCircle, ArrowLeft } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User, BookOpen, GraduationCap, CalendarDays, Activity } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export default function MahasiswaDetailPage({ params }: { params: { id: string } }) {
-  const { data: mhs, isLoading: loadingMhs } = useQuery({
-    queryKey: ['mahasiswa', params.id],
-    queryFn: () => siaClient.getMahasiswaDetail(params.id)
-  });
+export const dynamic = "force-dynamic";
 
-  const { data: ipkHistory, isLoading: loadingIpk } = useQuery({
-    queryKey: ['ipk', params.id],
-    queryFn: () => siaClient.getIpkHistory(params.id)
-  });
+export default async function MahasiswaDetailPage({ params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions);
+  const role = (session?.user as any)?.role;
+  const userId = (session?.user as any)?.id;
 
-  const { data: nilai, isLoading: loadingNilai } = useQuery({
-    queryKey: ['nilai', params.id, 3], // mock semester 3
-    queryFn: () => siaClient.getNilai(params.id, 3)
-  });
+  if (!session || role !== "dosen_wali") redirect("/login");
 
-  const { data: presensi, isLoading: loadingPresensi } = useQuery({
-    queryKey: ['presensi', params.id],
-    queryFn: () => siaClient.getPresensi(params.id)
-  });
+  let detail: any;
+  try {
+    detail = await getDetailMahasiswaLengkap(params.id, userId);
+  } catch (error) {
+    return (
+      <div className="text-center py-20 text-slate-500">
+        Mahasiswa tidak ditemukan atau bukan binaan Anda.
+      </div>
+    );
+  }
 
-  if (loadingMhs) return <div className="p-8 text-center text-slate-500">Memuat profil mahasiswa...</div>;
-  if (!mhs) return <div className="p-8 text-center text-red-500">Mahasiswa tidak ditemukan</div>;
+  const { profil, nilai, presensi, ipkHistory, skem } = detail;
 
-  // Transform data for bar chart
-  const distribusiNilai = [
-    { huruf: 'A', jumlah: nilai?.filter(n => n.nilai_huruf === 'A').length || 0 },
-    { huruf: 'AB', jumlah: nilai?.filter(n => n.nilai_huruf === 'AB').length || 0 },
-    { huruf: 'B', jumlah: nilai?.filter(n => n.nilai_huruf === 'B').length || 0 },
-    { huruf: 'BC', jumlah: nilai?.filter(n => n.nilai_huruf === 'BC').length || 0 },
-    { huruf: 'C', jumlah: nilai?.filter(n => n.nilai_huruf === 'C').length || 0 },
-    { huruf: 'D', jumlah: nilai?.filter(n => n.nilai_huruf === 'D').length || 0 },
-    { huruf: 'E', jumlah: nilai?.filter(n => n.nilai_huruf === 'E').length || 0 },
-  ];
+  // Kalkulasi IPK terkini (bisa dari ipkHistory terakhir)
+  const ipkSekarang = ipkHistory.length > 0 ? ipkHistory[ipkHistory.length - 1].ipk : 0;
+  
+  // Kalkulasi persentase kehadiran total
+  const totalHadir = presensi.reduce((acc: number, p: any) => acc + p.hadir, 0);
+  const totalPertemuan = presensi.reduce((acc: number, p: any) => acc + p.total_pertemuan, 0);
+  const persentaseKehadiran = totalPertemuan > 0 ? Math.round((totalHadir / totalPertemuan) * 100) : 100;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" asChild>
-          <Link href="/dosenwali/mahasiswa"><ArrowLeft className="h-4 w-4" /></Link>
-        </Button>
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Profil Mahasiswa</h2>
-          <p className="text-slate-500 dark:text-slate-400">Detail akademik untuk {mhs.nama} ({mhs.nrp}).</p>
+          <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
+            <Link href="/dosenwali/mahasiswa" className="hover:text-indigo-600">Daftar Binaan</Link>
+            <span>/</span>
+            <span>Detail Mahasiswa</span>
+          </div>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <User className="h-6 w-6 text-indigo-600" />
+            Profil Akademik Mahasiswa
+          </h1>
         </div>
+        <Button asChild variant="outline" className="glass-card">
+          <Link href="/dosenwali/psikologi">Lihat Hasil Psikologi</Link>
+        </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Kolom Kiri: Profil Card */}
-        <Card className="md:col-span-1 shadow-sm h-fit">
-          <CardHeader className="text-center pb-2">
-            <div className="mx-auto bg-blue-100 text-blue-600 w-24 h-24 rounded-full flex items-center justify-center mb-4">
-              <User className="h-12 w-12" />
-            </div>
-            <CardTitle className="text-xl">{mhs.nama}</CardTitle>
-            <CardDescription className="text-base">{mhs.nrp}</CardDescription>
-            <div className="mt-2">
-              <Badge variant={mhs.status === 'Aktif' ? 'default' : 'secondary'} className={mhs.status === 'Aktif' ? 'bg-green-100 text-green-800' : ''}>
-                {mhs.status}
-              </Badge>
-              {mhs.ipk_sekarang < 2.5 && (
-                <Badge variant="destructive" className="ml-2">Kritis</Badge>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-500">Angkatan</span>
-                <span className="font-medium">{mhs.angkatan}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Program Studi</span>
-                <span className="font-medium text-right">{mhs.program_studi}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">IPK Terkini</span>
-                <span className={`font-bold ${mhs.ipk_sekarang < 2.5 ? 'text-red-600' : 'text-slate-900 dark:text-slate-100'}`}>
-                  {mhs.ipk_sekarang.toFixed(2)}
+      <div className="grid md:grid-cols-3 gap-6">
+        {/* Info Card Utama */}
+        <Card className="md:col-span-1 glass-panel border-none shadow-sm h-fit">
+          <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex justify-center mb-4">
+              <div className="h-24 w-24 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center border-4 border-white dark:border-slate-900 shadow-sm">
+                <span className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                  {profil.nama.charAt(0)}
                 </span>
               </div>
             </div>
-            <div className="mt-6">
-              <Button className="w-full" asChild>
-                <Link href={`/dosenwali/mahasiswa/${mhs.id}/krs`}>Tinjau Nilai / KRS</Link>
-              </Button>
+            <div className="text-center">
+              <CardTitle className="text-xl">{profil.nama}</CardTitle>
+              <CardDescription className="font-mono mt-1 text-slate-500">{profil.nrp}</CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            <div>
+              <p className="text-sm text-slate-500 mb-1">Email</p>
+              <p className="font-medium">{profil.email}</p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 mb-1">Program Studi</p>
+              <p className="font-medium">{profil.program_studi}</p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 mb-1">Angkatan</p>
+              <p className="font-medium">{profil.angkatan}</p>
+            </div>
+            
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-4">
+              <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg text-center">
+                <p className="text-xs text-slate-500 font-semibold mb-1">IPK Saat Ini</p>
+                <p className={`text-xl font-bold ${ipkSekarang < 2.5 ? "text-red-600" : "text-indigo-700"}`}>
+                  {ipkSekarang.toFixed(2)}
+                </p>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-center">
+                <p className="text-xs text-slate-500 font-semibold mb-1">Kehadiran</p>
+                <p className={`text-xl font-bold ${persentaseKehadiran < 75 ? "text-red-600" : "text-emerald-700"}`}>
+                  {persentaseKehadiran}%
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Kolom Kanan: Tabs Konten */}
+        {/* Tab Detail Info */}
         <div className="md:col-span-2">
-          <Tabs defaultValue="grafik" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="grafik">Grafik & IPK</TabsTrigger>
-              <TabsTrigger value="presensi">Presensi</TabsTrigger>
-              <TabsTrigger value="semester_antara">Semester Antara</TabsTrigger>
+          <Tabs defaultValue="nilai" className="w-full">
+            <TabsList className="w-full justify-start border-b rounded-none h-12 bg-transparent p-0 mb-6">
+              <TabsTrigger value="nilai" className="data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none h-full bg-transparent px-6 font-semibold">
+                <GraduationCap className="h-4 w-4 mr-2" /> Nilai per Semester
+              </TabsTrigger>
+              <TabsTrigger value="presensi" className="data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none h-full bg-transparent px-6 font-semibold">
+                <CalendarDays className="h-4 w-4 mr-2" /> Rekap Presensi
+              </TabsTrigger>
+              <TabsTrigger value="skem" className="data-[state=active]:border-b-2 data-[state=active]:border-indigo-600 rounded-none h-full bg-transparent px-6 font-semibold">
+                <Activity className="h-4 w-4 mr-2" /> Capaian SKEM
+              </TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="grafik" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tren IPK per Semester</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[250px] w-full">
-                    {loadingIpk ? (
-                      <div className="h-full flex items-center justify-center text-slate-500">Memuat grafik...</div>
-                    ) : (
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={ipkHistory} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="semester" tickFormatter={(v) => `Smt ${v}`} />
-                          <YAxis domain={[0, 4]} />
-                          <Tooltip />
-                          <Legend />
-                          <Line type="monotone" dataKey="ipk" stroke="#2563eb" name="IPK Kumulatif" strokeWidth={3} />
-                          <Line type="monotone" dataKey="ips" stroke="#16a34a" name="IPS (Semester)" strokeWidth={2} strokeDasharray="5 5" />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Distribusi Nilai (Semester Berjalan)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[250px] w-full">
-                    {loadingNilai ? (
-                      <div className="h-full flex items-center justify-center text-slate-500">Memuat grafik...</div>
-                    ) : (
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={distribusiNilai} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                          <XAxis dataKey="huruf" />
-                          <YAxis allowDecimals={false} />
-                          <Tooltip cursor={{fill: 'transparent'}} />
-                          <Bar dataKey="jumlah" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="Jumlah Mata Kuliah" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="presensi" className="mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Rekap Kehadiran</CardTitle>
-                  <CardDescription>Persentase kehadiran per mata kuliah semester ini.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {loadingPresensi ? (
-                    <div className="text-center text-slate-500 p-4">Memuat data presensi...</div>
-                  ) : (
-                    <div className="space-y-6">
-                      {presensi?.map((p, idx) => (
-                        <div key={idx} className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="font-medium">{p.nama_mk} ({p.kode_mk})</span>
-                            <span className={p.persentase < 75 ? 'text-red-600 font-bold' : ''}>
-                              {p.hadir}/{p.total_pertemuan} ({p.persentase}%)
-                            </span>
-                          </div>
-                          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                            <div 
-                              className={`h-full ${p.persentase < 75 ? 'bg-red-500' : p.persentase < 85 ? 'bg-yellow-400' : 'bg-green-500'}`} 
-                              style={{ width: `${p.persentase}%` }}
-                            ></div>
+            {/* TAB NILAI */}
+            <TabsContent value="nilai" className="space-y-6">
+              {ipkHistory.length === 0 ? (
+                <div className="p-8 text-center text-slate-500 border border-dashed rounded-xl">Belum ada riwayat nilai semester.</div>
+              ) : (
+                ipkHistory.map((history: any) => {
+                  const nilaiSemester = nilai.filter((n: any) => n.semester === history.semester);
+                  return (
+                    <Card key={history.semester} className="glass-panel border-none shadow-sm">
+                      <CardHeader className="pb-2 bg-slate-50/50 dark:bg-slate-900/50 rounded-t-xl">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-lg">Semester {history.semester}</CardTitle>
+                          <div className="flex gap-4 text-sm">
+                            <span className="font-medium text-slate-600">IPS: <span className="font-bold text-indigo-600">{Number(history.ips).toFixed(2)}</span></span>
+                            <span className="font-medium text-slate-600">IPK: <span className="font-bold text-indigo-600">{Number(history.ipk).toFixed(2)}</span></span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      </CardHeader>
+                      <CardContent className="p-0">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Kode</TableHead>
+                              <TableHead>Mata Kuliah</TableHead>
+                              <TableHead className="text-center">SKS</TableHead>
+                              <TableHead className="text-center">Nilai Angka</TableHead>
+                              <TableHead className="text-center">Nilai Huruf</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {nilaiSemester.length === 0 ? (
+                              <TableRow>
+                                <TableCell colSpan={5} className="text-center py-4 text-slate-500">Tidak ada data mata kuliah.</TableCell>
+                              </TableRow>
+                            ) : (
+                              nilaiSemester.map((n: any) => (
+                                <TableRow key={n.id}>
+                                  <TableCell className="font-mono text-slate-500">{n.kode_mk}</TableCell>
+                                  <TableCell className="font-medium">{n.mata_kuliah?.nama_mk}</TableCell>
+                                  <TableCell className="text-center">{n.mata_kuliah?.sks}</TableCell>
+                                  <TableCell className="text-center">{Number(n.nilai_angka).toFixed(2)}</TableCell>
+                                  <TableCell className="text-center">
+                                    <Badge variant={n.nilai_huruf === 'D' || n.nilai_huruf === 'E' ? 'destructive' : 'secondary'} className="w-8 justify-center">
+                                      {n.nilai_huruf}
+                                    </Badge>
+                                  </TableCell>
+                                </TableRow>
+                              ))
+                            )}
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                    </Card>
+                  );
+                }).reverse() // Tampilkan semester terbaru di atas
+              )}
+            </TabsContent>
+
+            {/* TAB PRESENSI */}
+            <TabsContent value="presensi" className="space-y-4">
+              <Card className="glass-panel border-none shadow-sm">
+                <CardHeader>
+                  <CardTitle>Rekap Kehadiran Mata Kuliah</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Semester</TableHead>
+                        <TableHead>Mata Kuliah</TableHead>
+                        <TableHead className="text-center">Hadir</TableHead>
+                        <TableHead className="text-center">Total</TableHead>
+                        <TableHead className="text-right">Persentase</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {presensi.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-8 text-slate-500">Belum ada data presensi.</TableCell>
+                        </TableRow>
+                      ) : (
+                        presensi.map((p: any) => {
+                          const pct = p.total_pertemuan > 0 ? Math.round((p.hadir / p.total_pertemuan) * 100) : 0;
+                          return (
+                            <TableRow key={p.id}>
+                              <TableCell>{p.semester}</TableCell>
+                              <TableCell className="font-medium">{p.mata_kuliah?.nama_mk}</TableCell>
+                              <TableCell className="text-center">{p.hadir}</TableCell>
+                              <TableCell className="text-center">{p.total_pertemuan}</TableCell>
+                              <TableCell className="text-right">
+                                <span className={`font-bold ${pct < 75 ? "text-red-600" : "text-emerald-600"}`}>{pct}%</span>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      )}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="semester_antara" className="mt-4">
-              <Card>
+            {/* TAB SKEM */}
+            <TabsContent value="skem" className="space-y-4">
+              <Card className="glass-panel border-none shadow-sm">
                 <CardHeader>
-                  <CardTitle>Semester Antara</CardTitle>
+                  <CardTitle>Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM)</CardTitle>
+                  <CardDescription>Capaian kegiatan non-akademik mahasiswa.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-lg">
-                    {params.id === 'a1b1a8f9-4b0c-4e8c-8f9f-7e9b0a1b2c15' ? (
-                      <>
-                        <BookOpen className="h-12 w-12 text-blue-500 mb-4" />
-                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Sedang Menempuh Semester Antara</h3>
-                        <p className="text-slate-500 max-w-sm mt-2 mb-4">Mahasiswa ini mengambil 1 mata kuliah perbaikan pada semester antara.</p>
-                        <Badge variant="outline" className="text-blue-600 bg-blue-50">Struktur Data (IF102) - 3 SKS</Badge>
-                      </>
-                    ) : (
-                      <>
-                        <AlertCircle className="h-12 w-12 text-slate-300 mb-4" />
-                        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Tidak Ada Data</h3>
-                        <p className="text-slate-500 max-w-sm mt-2">Mahasiswa ini tidak mendaftar pada semester antara berjalan.</p>
-                      </>
-                    )}
-                  </div>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Kategori</TableHead>
+                        <TableHead>Nama Kegiatan</TableHead>
+                        <TableHead>Tanggal</TableHead>
+                        <TableHead className="text-center">Poin</TableHead>
+                        <TableHead className="text-right">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {skem.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-8 text-slate-500">Belum ada kegiatan SKEM yang diajukan.</TableCell>
+                        </TableRow>
+                      ) : (
+                        skem.map((s: any) => (
+                          <TableRow key={s.id}>
+                            <TableCell className="font-medium">{s.kategori}</TableCell>
+                            <TableCell>{s.nama_kegiatan}</TableCell>
+                            <TableCell>{new Date(s.tanggal_kegiatan).toLocaleDateString("id-ID")}</TableCell>
+                            <TableCell className="text-center font-bold text-indigo-600">{s.poin}</TableCell>
+                            <TableCell className="text-right">
+                              <Badge variant={s.status === 'DIVALIDASI' ? 'default' : 'outline'}>{s.status}</Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
             </TabsContent>
+
           </Tabs>
         </div>
       </div>

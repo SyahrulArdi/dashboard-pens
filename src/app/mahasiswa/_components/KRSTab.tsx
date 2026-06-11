@@ -17,7 +17,6 @@ export default function KRSTab({ profil, krs }: { profil: any, krs: any[] }) {
 
   const [formData, setFormData] = useState({
     semester: "",
-    file_krs_url: "",
     pesan_mahasiswa: ""
   });
 
@@ -42,7 +41,6 @@ export default function KRSTab({ profil, krs }: { profil: any, krs: any[] }) {
         mahasiswa_id: profil.id,
         dosen_wali_id: dosenWaliId,
         semester: parseInt(formData.semester),
-        file_krs_url: formData.file_krs_url,
         pesan_mahasiswa: formData.pesan_mahasiswa
       });
 
@@ -51,7 +49,7 @@ export default function KRSTab({ profil, krs }: { profil: any, krs: any[] }) {
         description: "Menunggu persetujuan Dosen Wali."
       });
       setIsOpen(false);
-      setFormData({ semester: "", file_krs_url: "", pesan_mahasiswa: "" });
+      setFormData({ semester: "", pesan_mahasiswa: "" });
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -95,17 +93,6 @@ export default function KRSTab({ profil, krs }: { profil: any, krs: any[] }) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="file_krs">Link File Bukti KRS (PDF/Drive)</Label>
-                <Input 
-                  id="file_krs" 
-                  type="url"
-                  placeholder="https://docs.google.com/..."
-                  value={formData.file_krs_url}
-                  onChange={e => setFormData({...formData, file_krs_url: e.target.value})}
-                />
-                <p className="text-xs text-slate-500">Opsional jika diwajibkan oleh dosen wali.</p>
-              </div>
-              <div className="space-y-2">
                 <Label htmlFor="pesan">Pesan untuk Dosen Wali (Opsional)</Label>
                 <Input 
                   id="pesan" 
@@ -128,8 +115,8 @@ export default function KRSTab({ profil, krs }: { profil: any, krs: any[] }) {
             <TableRow>
               <TableHead className="w-[100px]">Semester</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Pesan Saya</TableHead>
-              <TableHead>Balasan Dosen</TableHead>
+              <TableHead>Catatan Mahasiswa</TableHead>
+              <TableHead>Catatan Dosen</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -138,26 +125,21 @@ export default function KRSTab({ profil, krs }: { profil: any, krs: any[] }) {
                 <TableCell className="font-medium text-slate-600 dark:text-slate-400">Smst {item.semester}</TableCell>
                 <TableCell>
                   <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                    item.status_persetujuan === 'DISETUJUI' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                    item.status_persetujuan === 'DITOLAK' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
+                    item.status === 'DISETUJUI' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                    item.status === 'DITOLAK' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
                     'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
                   }`}>
-                    {item.status_persetujuan === 'DISETUJUI' && <CheckCircle2 className="h-3.5 w-3.5" />}
-                    {item.status_persetujuan === 'DITOLAK' && <XCircle className="h-3.5 w-3.5" />}
-                    {item.status_persetujuan === 'PENDING' && <Clock className="h-3.5 w-3.5" />}
-                    {item.status_persetujuan}
+                    {item.status === 'DISETUJUI' && <CheckCircle2 className="h-3.5 w-3.5" />}
+                    {item.status === 'DITOLAK' && <XCircle className="h-3.5 w-3.5" />}
+                    {item.status === 'MENUNGGU' && <Clock className="h-3.5 w-3.5" />}
+                    {item.status}
                   </div>
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
-                  {item.pesan_mahasiswa || "-"}
-                  {item.file_krs_url && (
-                    <a href={item.file_krs_url} target="_blank" rel="noreferrer" className="block text-blue-500 hover:underline mt-1 text-xs">
-                      [Lihat File]
-                    </a>
-                  )}
+                  {item.catatan_mahasiswa || "-"}
                 </TableCell>
                 <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
-                  {item.pesan_dosen || "-"}
+                  {item.catatan_dosen || "-"}
                 </TableCell>
               </TableRow>
             )) : (

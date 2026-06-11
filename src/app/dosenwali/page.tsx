@@ -1,7 +1,12 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import { getMahasiswaBinaan, getNotifikasiDosen, getPengajuanKRSBinaan } from "./actions";
+import {
+  getMahasiswaBinaan,
+  getNotifikasiDosen,
+  getPengajuanKRSBinaan,
+  getSemesterAntaraBinaan,
+} from "./actions";
 import OverviewClient from "./_components/OverviewClient";
 
 export const dynamic = "force-dynamic";
@@ -17,14 +22,13 @@ export default async function DosenWaliDashboard() {
 
   const dosenId = userId;
 
-  // Fetch all data in parallel
-  const [mahasiswaBinaan, notifikasi, pengajuanKRS] = await Promise.all([
+  const [mahasiswaBinaan, notifikasi, pengajuanKRS, semesterAntara] = await Promise.all([
     getMahasiswaBinaan(dosenId),
     getNotifikasiDosen(dosenId),
     getPengajuanKRSBinaan(dosenId),
+    getSemesterAntaraBinaan(dosenId),
   ]);
 
-  // Calculate summary stats
   const totalBinaan = mahasiswaBinaan.length;
   const bermasalahList = mahasiswaBinaan.filter(
     (m: any) => m.ipk < 2.5 || m.persentase_kehadiran < 75
@@ -32,19 +36,25 @@ export default async function DosenWaliDashboard() {
   const totalBermasalah = bermasalahList.length;
   const totalNotifikasiBaru = notifikasi.filter((n: any) => n.status === "BARU").length;
   const totalKRSPending = pengajuanKRS.filter((k: any) => k.status === "MENUNGGU").length;
+  const totalSemesterAntara = semesterAntara.length;
 
-  // Calculate trend IPK per semester
-  const semesterMap: Record<number, { total: number; count: number }> = {};
+  // Build IPK trend dari data ipk_per_semester yang real
+  // Rata-rata IPK semua mahasiswa binaan per semester
+  const semesterIPKMap: Record<number, { total: number; count: number }> = {};
+  
+  // Kita perlu ambil ipk_per_semester untuk semua mahasiswa binaan
+  // Data IPK sudah dihitung di getMahasiswaBinaan, tapi kita butuh history
+  // Gunakan bermasalahList sebagai data untuk trend keseluruhan
   mahasiswaBinaan.forEach((m: any) => {
-    const nilais = m.nilai_mahasiswa || [];
-    nilais.forEach((n: any) => {
-      if (!semesterMap[n.semester]) semesterMap[n.semester] = { total: 0, count: 0 };
-      semesterMap[n.semester].total += Number(n.nilai_angka);
-      semesterMap[n.semester].count += 1;
-    });
+    const sem = m.semester_terbaru;
+    if (sem > 0) {
+      if (!semesterIPKMap[sem]) semesterIPKMap[sem] = { total: 0, count: 0 };
+      semesterIPKMap[sem].total += m.ipk;
+      semesterIPKMap[sem].count += 1;
+    }
   });
 
-  const trendIPK = Object.entries(semesterMap)
+  const trendIPK = Object.entries(semesterIPKMap)
     .map(([sem, val]) => ({
       semester: `Semester ${sem}`,
       ipk_rata_rata: Number((val.total / val.count).toFixed(2)),
@@ -56,7 +66,7 @@ export default async function DosenWaliDashboard() {
       totalBinaan={totalBinaan}
       totalBermasalah={totalBermasalah}
       totalNotifikasiBaru={totalNotifikasiBaru}
-      totalSemesterAntara={0}
+      totalSemesterAntara={totalSemesterAntara}
       totalKRSPending={totalKRSPending}
       trendIPK={trendIPK}
       mahasiswaBermasalah={bermasalahList.map((m: any) => ({

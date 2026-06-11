@@ -1,0 +1,438 @@
+﻿
+
+PROPOSAL PROYEK AKHIR
+
+
+
+PENGEMBANGAN DASHBOARD MONITORING MAHASISWA WALI PENS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Syahrul Ardi Prasetiyo
+NRP. 3124500035
+
+
+
+DOSEN PEMBIMBING
+
+Entin Martiana Kusumaningtyas S.Kom, M.Kom.
+NIP 197403122000122001
+
+Nana Ramadijanti S.Kom, M.Kom.
+NIP 197111091998022001
+
+
+
+
+
+
+
+PROGRAM STUDI SARJANA TERAPAN
+TEKNIK INFORMATIKA
+DEPARTEMEN TEKNIK INFORMATIKA DAN KOMPUTER
+POLITEKNIK ELEKTRONIKA NEGERI SURABAYA
+2026
+BAB 1
+PENDAHULUAN
+
+
+1.1   LATAR BELAKANG
+
+Politeknik Elektronika Negeri Surabaya (PENS) menerapkan sistem perwalian sebagai mekanisme pendampingan akademik mahasiswa. Dalam sistem ini, setiap dosen wali bertanggung jawab membimbing sejumlah mahasiswa yang meliputi pemantauan perkembangan akademik, kehadiran, nilai, dan kondisi umum mahasiswa selama masa studi. Sistem perwalian menjadi salah satu komponen penting dalam menjaga kualitas pendidikan dan keberhasilan studi mahasiswa di perguruan tinggi [1]. Berdasarkan Peraturan Akademik PENS, dosen wali didefinisikan sebagai dosen yang membimbing dan mengarahkan mahasiswa baik dalam masalah akademik maupun non-akademik sejak awal hingga mahasiswa dinyatakan lulus, sehingga tanggung jawab dosen wali tidak terbatas pada aspek akademik semata [12].
+Saat ini, web dosen wali yang tersedia di PENS masih difungsikan secara terbatas, yaitu terutama untuk keperluan persetujuan pengambilan SKS mata kuliah dalam proses Kartu Rencana Studi (KRS). Padahal, tantangan nyata yang dihadapi institusi adalah meningkatnya jumlah mahasiswa yang mengalami drop out (DO) atau tidak lulus tepat waktu, yang salah satunya disebabkan oleh kurangnya pemantauan akademik secara berkala dan terstruktur oleh dosen wali [2]. Seiring dengan kebutuhan pemantauan yang lebih menyeluruh, fungsi web dosen wali perlu diperluas untuk mencakup monitoring presensi dan nilai mahasiswa secara terpadu, sehingga dosen wali dapat mengidentifikasi lebih dini mahasiswa yang berisiko mengalami permasalahan akademik dan segera memberikan intervensi yang tepat. Sebagai gambaran besarnya persoalan ini, data Direktorat Jenderal Pendidikan Tinggi, Riset, dan Teknologi mencatat jumlah mahasiswa yang mengalami putus kuliah secara nasional mencapai sekitar 375.314 mahasiswa atau 4% dari total mahasiswa terdaftar per April 2023, yang sebagian dipicu oleh persoalan akademik yang tidak terdeteksi dan tertangani sejak dini [15].
+Penelitian mengenai sistem monitoring akademik berbasis web menunjukkan bahwa pemantauan presensi dan nilai secara real-time memberikan dampak positif terhadap keberhasilan studi mahasiswa. Sistem web monitoring yang mengintegrasikan data presensi dan nilai memungkinkan pengajar atau pembimbing untuk segera mendeteksi penurunan performa akademik dan mengambil tindakan preventif sebelum permasalahan berkembang lebih jauh [3]. Selain itu, penerapan sistem notifikasi berbasis kondisi akademik terbukti mampu meningkatkan responsivitas dosen dalam menangani mahasiswa yang berisiko mengalami kegagalan studi [4]. Namun demikian, di PENS fungsi web dosen wali untuk pemantauan presensi dan nilai belum tersedia secara terintegrasi, sehingga dosen wali tidak dapat memantau kondisi mahasiswa binaannya secara komprehensif dan proaktif dalam satu platform yang sama.
+Penelitian-penelitian sebelumnya telah mengeksplorasi pengembangan sistem web monitoring untuk keperluan akademik. Ilhamsyah dan Rahmayudha [1] merancang model dashboard untuk monitoring evaluasi mahasiswa, namun ruang lingkupnya terbatas pada visualisasi data kinerja jurusan secara agregat, bukan untuk kebutuhan monitoring individual per dosen wali. Hidayat dkk. [2] membangun sistem informasi monitoring akademik mahasiswa berbasis web yang memungkinkan pemantauan nilai dan kehadiran secara terpusat oleh pembimbing akademik, dan hasil penelitian tersebut menunjukkan bahwa sistem semacam ini efektif dalam menekan jumlah mahasiswa yang tidak lulus tepat waktu. Jubaedi dkk. [4] mengembangkan sistem monitoring kehadiran mahasiswa berbasis web dengan fitur notifikasi otomatis yang terbukti meningkatkan responsivitas dalam penanganan permasalahan akademik. Namun, penelitian-penelitian tersebut belum mengintegrasikan fungsi persetujuan KRS bersama pemantauan presensi dan nilai dalam satu platform khusus untuk dosen wali di lingkungan perguruan tinggi vokasi seperti PENS. Ayu dkk. [5] menunjukkan bahwa penerapan RESTful API pada sistem informasi manajemen dosen di perguruan tinggi mampu mempercepat pertukaran data antar-sistem, namun implementasinya belum mencakup fitur pemantauan kondisi akademik mahasiswa secara real-time untuk keperluan dosen wali.
+Selain aspek akademik, pendampingan oleh dosen wali juga mencakup dimensi non-akademik mahasiswa. Di PENS, keaktifan mahasiswa dalam kegiatan di luar perkuliahan diukur melalui Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM), dan kelulusan SKEM menjadi salah satu syarat yang harus dipenuhi mahasiswa untuk dapat dinyatakan lulus dari PENS [12]. Akan tetapi, capaian SKEM dan perkembangan kegiatan non-akademik mahasiswa binaan belum dapat dipantau oleh dosen wali melalui web dosen wali yang ada saat ini, sehingga terdapat risiko mahasiswa terhambat kelulusannya akibat kekurangan SKEM yang tidak terpantau sejak dini.
+Di sisi lain, permasalahan akademik mahasiswa kerap berakar pada kondisi psikologis, sehingga pemahaman terhadap profil psikologis mahasiswa dapat membantu dosen wali memberikan pendampingan yang lebih tepat dan menyeluruh [13]. Sejalan dengan hal tersebut, terdapat penelitian proyek akhir lain di lingkungan PENS yang mengembangkan sistem tes psikologi mahasiswa. Hasil tes psikologi dari sistem tersebut berpotensi diintegrasikan ke dalam dashboard monitoring melalui REST API, sehingga dosen wali dapat meninjau kondisi akademik dan kondisi psikologis mahasiswa binaannya secara terpadu dalam satu platform.
+Berdasarkan kesenjangan tersebut, penelitian ini mengusulkan pengembangan Dashboard Monitoring Mahasiswa Wali PENS yang mampu mengintegrasikan data akademik mahasiswa secara terpusat dan menampilkannya dalam bentuk visualisasi data interaktif berbasis web. Dashboard ini dirancang untuk memudahkan dosen wali dalam meninjau nilai semester sebelumnya saat proses KRS, memantau mahasiswa bermasalah secara akademik, melihat grafik perkembangan IPK per semester, mengetahui mahasiswa yang sedang menempuh semester antara, serta menerima notifikasi otomatis ketika mahasiswa binaan memerlukan perhatian khusus. Tujuan dari penelitian ini dibuat adalah untuk mengembangkan fitur dan informasi yang terintegritas pada web dashboard milik PENS. Selain itu, dashboard juga dirancang untuk memantau capaian non-akademik mahasiswa melalui Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM) serta menampilkan hasil tes psikologi yang diintegrasikan dari sistem proyek akhir lain, sehingga pemantauan mahasiswa binaan dapat dilakukan secara menyeluruh, baik dari sisi akademik maupun non-akademik.
+
+1.2   PERMASALAHAN
+
+Berdasarkan latar belakang yang telah diuraikan, persoalan praktis dalam sistem perwalian akademik di PENS dirumuskan sebagai berikut:
+
+Ketika mahasiswa mengajukan KRS, dosen wali tidak dapat langsung meninjau nilai semester sebelumnya karena data akademik belum tersedia dalam satu tampilan terintegrasi, sehingga proses persetujuan KRS berlangsung tanpa pertimbangan akademik yang memadai [2]. Apa saja kebutuhan informasi dan fitur yang diperlukan dosen wali dalam memantau perkembangan akademik mahasiswa.
+Dosen wali kesulitan memantau mahasiswa yang bermasalah secara akademik, seperti mahasiswa dengan nilai rendah atau tingkat kehadiran buruk, karena belum tersedia mekanisme pemantauan yang terpusat dan mudah diakses. Bagaimana mengembangkan dashboard yang dapat membantu dosen wali dalam mengakses informasi akademik maahsiswa yang memerlukan perhatian khusus. 
+Belum adanya visualisasi grafik IPK per semester menyebabkan dosen wali tidak dapat mendeteksi tren penurunan prestasi mahasiswa secara dini, sehingga strategi bimbingan menjadi kurang tepat sasaran [3]. Bagaimana megembangkan fitur pemantauan pada dashboard yang membantu dosen wali dalam mengdentifikasi perkembangan dan potensi permasalahan akademik mahasiswa secara lebih cepat dan efektif.
+Informasi mahasiswa yang mengikuti semester antara belum terintegrasi dalam sistem perwalian, sehingga dosen wali tidak dapat mengetahui dengan mudah siapa saja mahasiswa binaannya yang sedang menempuh semester antara. Bagaimana menyajikan informasi mahasiswa yang mengkuti semester antara utuk mendukung proses pemantauan akademik oleh dosen wali.
+Bagaimana dashboard monitoring dapat membantu dosen wali dalam meninjau laporan PPKS dan memantau perkembangan mahasiswa yang memerlukan perhatian khusus secara akademik.
+Capaian non-akademik mahasiswa, khususnya perolehan Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM) yang menjadi syarat kelulusan, belum dapat dipantau oleh dosen wali secara terintegrasi. Bagaimana mengembangkan fitur pada dashboard yang dapat membantu dosen wali memantau capaian non-akademik dan perolehan SKEM mahasiswa binaannya.
+Dosen wali belum memiliki akses terhadap hasil tes psikologi mahasiswa yang dapat menunjang pemahaman kondisi mahasiswa secara menyeluruh. Bagaimana mengintegrasikan hasil tes psikologi mahasiswa dari sistem proyek akhir lain ke dalam dashboard agar dapat ditinjau oleh dosen wali berdampingan dengan data akademik.
+
+1.3   TUJUAN
+
+Penelitian proyek akhir ini mengajukan suatu pendekatan baru dalam pengelolaan sistem perwalian akademik dengan mengembangkan Dashboard Monitoring Mahasiswa Wali PENS yang mengintegrasikan data akademik secara terpusat dan menyajikannya melalui visualisasi data interaktif berbasis web menggunakan teknologi REST API dan React.js. Orisinalitas penelitian terletak pada pemaduan tiga elemen yang selama ini terfragmentasi dalam konteks perwalian akademik di PENS, yaitu integrasi data akademik multi-sumber melalui REST API, visualisasi data interaktif yang berpusat pada kebutuhan dosen wali, serta mekanisme notifikasi otomatis berbasis kondisi akademik mahasiswa. Selain ketiga elemen tersebut, penelitian ini juga memperluas cakupan pemantauan dengan menyertakan dimensi non-akademik melalui pemantauan Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM) serta integrasi hasil tes psikologi mahasiswa dari sistem proyek akhir lain.
+Penelitian ini dibatasi pada penggunaan dan akses data akademik yang tersedia melalui antarmuka REST API sistem informasi akademik PENS yang sudah ada, serta fitur yang dikembangkan difokuskan pada kebutuhan dosen wali sebagai pengguna utama. Kolaborasi multi-pengguna secara simultan dan pengembangan modul analitik prediktif diposisikan sebagai arah pengembangan lanjutan. Adapun tujuan spesifik penelitian ini adalah sebagai berikut:
+
+Membangun sistem dashboard yang mengintegrasikan data akademik mahasiswa wali PENS secara terpusat, termasuk data nilai per semester yang dapat diakses dosen wali pada saat proses persetujuan KRS.
+Menyediakan fitur pemantauan mahasiswa bermasalah secara akademik, seperti mahasiswa dengan nilai rendah atau tingkat kehadiran buruk, sehingga dosen wali dapat mengidentifikasi dan memberikan bimbingan dengan cepat.
+Mengimplementasikan visualisasi grafik IPK per semester untuk setiap mahasiswa binaan, sehingga dosen wali dapat mendeteksi tren penurunan prestasi akademik secara dini dan menyusun strategi bimbingan yang lebih tepat sasaran.
+Mengintegrasikan informasi mahasiswa yang mengikuti semester antara ke dalam dashboard, sehingga dosen wali dapat mengetahui dengan mudah siapa saja mahasiswa binaannya yang sedang menempuh semester antara.
+Menyediakan fitur pemantauan capaian non-akademik mahasiswa binaan, khususnya perolehan Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM), sehingga dosen wali dapat memastikan mahasiswa memenuhi syarat kelulusan non-akademik.
+Mengintegrasikan hasil tes psikologi mahasiswa dari sistem proyek akhir lain melalui REST API, sehingga dosen wali dapat meninjau kondisi psikologis mahasiswa binaan secara terpadu dengan kondisi akademiknya.
+
+1.4   MANFAAT
+
+Penelitian ini diharapkan dapat memberikan kontribusi nyata terhadap peningkatan kualitas sistem perwalian akademik di PENS. Manfaat dari sistem yang dirancang dapat dirasakan oleh beberapa pihak dengan bentuk kontribusi yang spesifik sebagai berikut:
+
+Bagi dosen wali, sistem ini memberikan lingkungan kerja terpadu yang mempersingkat waktu dan proses monitoring dengan menggantikan alur kerja terfragmentasi menjadi satu antarmuka dashboard tunggal. Dosen wali memperoleh manfaat berupa kemudahan dalam meninjau nilai semester sebelumnya saat persetujuan KRS, ketersediaan visualisasi grafik IPK yang informatif, notifikasi otomatis terhadap kondisi akademik kritis mahasiswa binaan, serta informasi mahasiswa yang sedang menempuh semester antara. Selain itu, dosen wali juga memperoleh kemudahan dalam memantau capaian non-akademik mahasiswa melalui SKEM serta meninjau hasil tes psikologi mahasiswa secara terintegrasi, sehingga pendampingan dapat dilakukan secara menyeluruh, baik dari sisi akademik maupun non-akademik.
+Bagi mahasiswa, keberadaan dashboard ini memungkinkan dosen wali memberikan bimbingan yang lebih tepat, cepat, dan berbasis data nyata. Proses persetujuan KRS menjadi lebih bermakna karena didasarkan pada tinjauan nilai semester sebelumnya, sehingga mahasiswa mendapat arahan akademik yang lebih sesuai dengan kondisi mereka.
+Bagi institusi PENS, sistem ini berkontribusi pada peningkatan kualitas pengelolaan akademik secara keseluruhan. Dengan tersedianya data terpusat mengenai nilai mahasiswa, kehadiran, grafik IPK, dan keikutsertaan semester antara, institusi dapat mengidentifikasi tren permasalahan akademik secara lebih cepat dan mendukung pengambilan kebijakan akademik yang lebih tepat sasaran. Proses perwalian yang terdigitalisasi juga mengurangi beban administrasi dan meningkatkan efisiensi operasional.
+Bagi pengembangan bidang keilmuan rekayasa perangkat lunak, penelitian ini memberikan kontribusi berupa studi kasus penerapan integrasi REST API dengan antarmuka dashboard interaktif berbasis React.js untuk konteks sistem informasi akademik yang membutuhkan visualisasi data secara real-time. Rancangan arsitektur yang dihasilkan dapat menjadi rujukan bagi pengembangan sistem serupa di institusi pendidikan tinggi lainnya [5, 7].
+Bagi penelitian lanjutan, hasil penelitian ini dapat menjadi pijakan bagi penelitian berikutnya, baik dalam bentuk pengembangan fitur lanjutan seperti dukungan kolaborasi multi-pengguna dan analitik prediktif berbasis machine learning, maupun dalam bentuk studi banding untuk mengukur efektivitas dashboard monitoring terhadap peningkatan kualitas pendampingan akademik mahasiswa.
+
+1.5   SISTEMATIKA PENULISAN
+
+Buku proyek akhir ini disusun dalam lima bab dengan sistematika sebagai berikut:
+
+Bab 1Pendahuluan
+Memuat latar belakang, perumusan permasalahan, tujuan, manfaat, dan sistematika penulisan yang menjadi dasar pelaksanaan penelitian.
+
+Bab 2Kajian Pustaka
+Membahas landasan teori yang digunakan dalam penelitian, meliputi konsep sistem perwalian akademik, dashboard monitoring berbasis web, teknologi REST API, visualisasi data interaktif, serta tinjauan terhadap penelitian terdahulu yang relevan.
+
+Bab 3Desain Sistem
+Memaparkan analisis kebutuhan, arsitektur sistem, perancangan basis data, serta rancangan antarmuka dashboard berbasis React.js beserta alur integrasi data akademik melalui REST API.
+
+Bab 4Eksperimen dan Analisis
+Membahas implementasi sistem, hasil pengujian fungsionalitas fitur-fitur dashboard, serta analisis kinerja sistem terhadap kebutuhan dosen wali di PENS.
+
+Bab 5Penutup
+Berisi kesimpulan dari hasil penelitian beserta saran untuk pengembangan lebih lanjut.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BAB 2
+KAJIAN PUSTAKA
+
+Proyek akhir ini berada pada irisan dua bidang, yaitu pengelolaan sistem perwalian akademik di perguruan tinggi vokasi dan rekayasa perangkat lunak berbasis web. Domain pertama menempatkan dosen wali sebagai aktor kunci yang bertanggung jawab memantau dan membimbing perkembangan akademik mahasiswa binaannya secara menyeluruh. Domain kedua menghadirkan peluang berupa kemampuan teknologi dashboard berbasis web untuk mengintegrasikan data akademik yang tersebar dari berbagai sumber menjadi satu tampilan terpusat yang informatif dan interaktif.
+Permasalahan teknis utama adalah bagaimana membangun sebuah sistem dashboard berbasis web yang mampu mengintegrasikan data akademik mahasiswa wali dari sistem informasi akademik PENS melalui antarmuka REST API, menyajikan data tersebut dalam bentuk visualisasi interaktif yang relevan bagi dosen wali, serta menyediakan mekanisme notifikasi otomatis berbasis kondisi akademik mahasiswa. Permasalahan tersebut dirumuskan sebagai perancangan sistem yang bertanggung jawab pada lapisan antarmuka pengguna, lapisan integrasi data melalui REST API, dan lapisan penyajian visualisasi data. Selaras dengan batasan yang ditetapkan pada Bab 1, platform yang dirancang berfokus pada kebutuhan dosen wali sebagai pengguna tunggal sehingga pembahasan teori penunjang pada bab ini tidak mencakup mekanisme kolaborasi multi-user secara simultan maupun modul analitik prediktif.
+
+2.1   DESKRIPSI PERMASALAHAN
+
+Sebagaimana telah diuraikan pada Bab 1, pengelolaan sistem perwalian akademik di PENS menghadapi sejumlah persoalan yang berkisar dari fragmentasi data akademik di berbagai platform, ketiadaan visualisasi terpusat, hingga keterlambatan penanganan masalah akademik mahasiswa akibat tidak adanya mekanisme notifikasi otomatis. Pada bab ini, persoalan-persoalan tersebut diformulasikan ulang dari sudut pandang rekayasa perangkat lunak, sehingga setiap permasalahan dapat dipetakan ke kebutuhan teknis spesifik yang akan dijawab melalui teori penunjang.
+Fragmentasi data akademik di berbagai sistem informasi yang tidak terintegrasi menuntut perancangan lapisan integrasi data berbasis REST API yang mampu mengonsumsi data dari sistem informasi akademik PENS yang sudah ada dan menyajikannya secara terpusat. Perancangan tersebut menimbulkan kebutuhan teknis akan arsitektur aplikasi web modern yang memisahkan tanggung jawab antara lapisan frontend dan lapisan backend, serta strategi pengambilan dan pengelolaan data dari API eksternal yang konsisten dan andal.
+Ketiadaan visualisasi terpusat yang menyajikan data nilai, kehadiran, dan tren perkembangan IPK mahasiswa menuntut implementasi komponen visualisasi data interaktif berbasis web yang mampu mengolah dan menampilkan data akademik dalam bentuk grafik yang informatif dan mudah dibaca oleh dosen wali. Sementara itu, ketiadaan mekanisme notifikasi otomatis menuntut implementasi sistem pemantauan kondisi akademik yang dapat secara proaktif menginformasikan dosen wali ketika terdapat mahasiswa binaan yang memerlukan perhatian khusus. Teori-teori penunjang yang mendasari setiap kebutuhan teknis tersebut akan diuraikan secara berurutan pada sub-bab berikutnya.
+
+2.2   TEORI PENUNJANG
+
+Berikut adalah beberapa teori penunjang yang relevan untuk mendukung penelitian proyek akhir ini.
+
+2.2.1  Sistem Perwalian Akademik
+
+Sistem perwalian akademik adalah mekanisme pendampingan yang diterapkan oleh perguruan tinggi untuk memastikan setiap mahasiswa mendapatkan bimbingan dari seorang dosen wali yang bertanggung jawab memantau perkembangan akademik, memberikan arahan studi, dan membantu menyelesaikan permasalahan akademik yang dihadapi mahasiswa selama masa studi. Dosen wali berperan sebagai jembatan antara institusi dan mahasiswa dalam hal pemantauan capaian akademik, konsultasi kurikulum, serta evaluasi kelayakan pengambilan mata kuliah pada setiap semester [1]. Peran pendampingan yang optimal oleh dosen wali terbukti berkontribusi terhadap peningkatan prestasi belajar mahasiswa [14].
+Dalam konteks Politeknik Elektronika Negeri Surabaya (PENS), sistem perwalian mencakup sejumlah tanggung jawab yang perlu didukung oleh data akademik yang akurat dan mudah diakses. Tanggung jawab tersebut meliputi peninjauan nilai semester sebelumnya pada saat proses persetujuan Kartu Rencana Studi (KRS), pemantauan mahasiswa yang mengalami permasalahan akademik seperti nilai rendah atau tingkat kehadiran buruk, serta pemantauan mahasiswa yang sedang menempuh semester antara. Efektivitas pelaksanaan tanggung jawab tersebut sangat bergantung pada ketersediaan data akademik yang terpusat, akurat, dan dapat diakses secara cepat oleh dosen wali [2]. Hal tersebut sejalan dengan Peraturan Akademik PENS yang menegaskan bahwa dosen wali bertugas membimbing dan mengarahkan mahasiswa, baik dalam masalah akademik maupun non-akademik, sejak awal hingga mahasiswa dinyatakan lulus [12].
+Penelitian yang dilakukan oleh Diharja dkk. [3] menegaskan bahwa keberhasilan implementasi sistem informasi manajemen di perguruan tinggi ditentukan oleh sejauh mana sistem tersebut mampu menyediakan data yang relevan bagi para pemangku kepentingan akademik secara tepat waktu. Dalam konteks sistem perwalian, ketersediaan visualisasi data akademik yang komprehensif dan notifikasi proaktif menjadi kebutuhan mendasar agar dosen wali dapat menjalankan perannya secara optimal dan tidak hanya bergantung pada laporan manual dari bagian administrasi.
+
+2.2.2  Dashboard Monitoring Berbasis Web
+
+Dashboard monitoring berbasis web adalah antarmuka pengguna yang dirancang untuk menyajikan sekumpulan informasi kritis dari suatu domain secara terpusat, terorganisir, dan mudah dipahami dalam satu halaman atau tampilan. Berbeda dengan laporan statis, dashboard bersifat interaktif dan diperbarui secara real-time atau sesuai permintaan pengguna, sehingga memungkinkan pengambilan keputusan yang lebih cepat dan berbasis data nyata. Elemen utama sebuah dashboard yang efektif mencakup komponen visualisasi data seperti grafik dan bagan, indikator kinerja utama, serta mekanisme filter dan navigasi yang memudahkan pengguna mengeksplorasi data secara mandiri.
+Pada konteks akademik, dashboard monitoring dimanfaatkan untuk memvisualisasikan data kinerja mahasiswa seperti nilai, kehadiran, dan tren Indeks Prestasi Kumulatif (IPK) secara agregat maupun individual. Ilhamsyah dan Rahmayudha [1] merancang model dashboard untuk monitoring evaluasi mahasiswa yang menunjukkan bahwa penyajian data akademik melalui antarmuka visual terpusat mampu meningkatkan efisiensi pemantauan kinerja akademik secara signifikan dibandingkan metode pelaporan konvensional. Hasil tersebut memperkuat justifikasi pengembangan dashboard monitoring dalam konteks sistem perwalian akademik di PENS, di mana dosen wali membutuhkan akses cepat terhadap data kondisi akademik mahasiswa binaannya tanpa harus mengakses beberapa sistem secara terpisah.
+
+2.2.3  REST API
+
+REST API (Representational State Transfer Application Programming Interface) adalah gaya arsitektur antarmuka pemrograman aplikasi yang memanfaatkan protokol HTTP sebagai media komunikasi antar sistem. Arsitektur REST mendefinisikan sejumlah batasan desain, yaitu antarmuka yang seragam, arsitektur client-server yang terpisah, komunikasi yang stateless, kemampuan caching, sistem berlapis, serta kode on-demand yang opsional. Komunikasi dilakukan melalui metode HTTP standar seperti GET, POST, PUT, dan DELETE, dengan data yang ditukar umumnya dalam format JSON yang ringan dan mudah diproses oleh berbagai bahasa pemrograman [5].
+Ayu dkk. [5] mendemonstrasikan bahwa penerapan RESTful API pada sistem informasi manajemen dosen di perguruan tinggi mampu mempercepat pertukaran data antar subsistem akademik secara signifikan. Ramadhan dan Zukhri [6] memperkuat temuan tersebut dengan menunjukkan bahwa pengembangan REST API menggunakan pendekatan yang terstruktur menghasilkan layanan yang modular, mudah dikembangkan, dan konsisten dalam kontrak datanya. Pada proyek akhir ini, REST API berperan sebagai jembatan utama antara dashboard yang dibangun dengan lapisan backend sebagai gateway menuju sistem informasi akademik PENS yang sudah ada, sehingga data akademik mahasiswa dapat diambil dan disajikan secara terpusat tanpa mengubah sistem sumber.
+
+2.2.4  React.js
+
+React adalah pustaka JavaScript sumber terbuka yang dikembangkan oleh Meta, yang dulunya bernama Facebook, untuk membangun antarmuka pengguna berbasis komponen. Konsep utamanya adalah antarmuka aplikasi disusun dari komponen-komponen kecil yang dapat digunakan kembali, masing-masing mengelola tampilan dan perilakunya sendiri. React dapat menggunakan sintaks JSX yang memungkinkan penulisan struktur antarmuka secara deklaratif di dalam kode JavaScript. React menerapkan mekanisme virtual DOM untuk memperbarui tampilan secara efisien dengan hanya merender ulang bagian antarmuka yang benar-benar berubah [7].
+
+React menjadi pilihan yang sesuai untuk platform dashboard monitoring mahasiswa wali yang memiliki antarmuka kompleks dan dinamis, seperti komponen grafik IPK interaktif, tabel pemantauan mahasiswa bermasalah yang dapat difilter, dan panel notifikasi yang perlu diperbarui secara responsif terhadap interaksi pengguna. Dukungan ekosistem React yang luas, seperti integrasi dengan pustaka visualisasi data Recharts atau Chart.js, serta pustaka manajemen state dan fetching data seperti TanStack Query, semakin memperkuat justifikasi pemilihan React sebagai pondasi lapisan frontend pada proyek akhir ini.
+
+2.2.5  Visualisasi Data Interaktif
+
+Visualisasi data adalah representasi grafis dari informasi dan data numerik yang memanfaatkan elemen visual seperti grafik, bagan, dan peta untuk mengkomunikasikan tren, pola, dan anomali secara lebih intuitif dibandingkan data mentah dalam bentuk tabel atau angka. Dalam konteks aplikasi web, visualisasi data interaktif merujuk pada komponen visual yang merespons interaksi pengguna seperti hover, klik, dan filter, sehingga pengguna dapat mengeksplorasi dimensi data yang berbeda secara mandiri tanpa harus meminta laporan baru.
+
+Pada konteks dashboard monitoring akademik, visualisasi data yang paling relevan mencakup grafik garis untuk menampilkan tren IPK mahasiswa per semester, grafik batang untuk membandingkan nilai antar mata kuliah, serta tabel interaktif untuk menyajikan daftar mahasiswa beserta status akademiknya. Dalam ekosistem React, pustaka visualisasi data seperti Recharts dan Chart.js menyediakan komponen grafis siap pakai yang terintegrasi secara natural dengan siklus rendering React, sehingga tampilan grafik diperbarui secara otomatis ketika data yang mendasarinya berubah. Kemampuan tersebut sangat relevan untuk dashboard monitoring mahasiswa wali di mana dosen wali perlu meninjau data akademik yang diperbarui pada setiap awal semester atau ketika data baru tersedia dari sistem informasi akademik PENS.
+
+2.2.6  State Management
+
+State management adalah praktik pengelolaan data di sisi frontend yang menentukan bagaimana data disimpan, diakses, diperbarui, dan disinkronkan antar komponen sepanjang siklus hidup aplikasi. Terdapat dua kategori state utama pada aplikasi modern yang kompleks. Pertama, client state yang merepresentasikan data antarmuka pengguna seperti status modal, kondisi filter aktif, dan tab yang sedang ditampilkan. Kedua, server state yang merepresentasikan data yang berasal dari backend dan perlu disinkronkan dengan sumber kebenaran di sisi server. Pemisahan kedua kategori tersebut menjadi penting karena karakteristik pengelolaannya berbeda. Client state membutuhkan akses cepat dan pembaruan reaktif terhadap interaksi pengguna, sementara server state membutuhkan mekanisme caching, invalidation, dan sinkronisasi otomatis dengan backend.
+
+Dalam pengembangan aplikasi modern menggunakan React, TanStack Query yang sebelumnya dikenal sebagai React Query merupakan pustaka yang dikhususkan untuk menangani server state. TanStack Query menyediakan mekanisme caching otomatis berbasis query key, background refetching, retry logic, serta invalidation yang terstruktur, sehingga pengembang tidak perlu menulis logika sinkronisasi data secara manual. Pada dashboard monitoring mahasiswa wali, TanStack Query berperan dalam mengelola data akademik yang diambil dari REST API secara cache per identifikasi mahasiswa atau semester, sehingga data tetap tersedia ketika dosen wali berpindah antar halaman tanpa perlu permintaan ulang ke backend.
+
+2.2.7  NestJS
+
+NestJS adalah framework sumber terbuka untuk membangun aplikasi sisi server berbasis Node.js yang dirancang dengan dukungan TypeScript secara native. NestJS menerapkan arsitektur modular yang terinspirasi dari pola Model-View-Controller dan konsep dependency injection. Setiap fitur aplikasi dipecah ke dalam modul-modul yang berisi controller, service, dan provider dengan tanggung jawab masing-masing yang jelas. Pemisahan ini memudahkan pengembang dalam mengelola kompleksitas aplikasi, melakukan pengujian, serta memperluas fungsionalitas tanpa harus mengubah struktur kode yang sudah ada.
+
+NestJS dipilih sebagai lapisan backend pada dashboard monitoring mahasiswa wali yang menuntut struktur kode teratur dan dapat dikembangkan secara bertahap. Modul-modul terpisah dapat digunakan untuk menangani tanggung jawab seperti autentikasi dosen wali, pengambilan data akademik melalui REST API sistem informasi akademik PENS, pengelolaan logika notifikasi otomatis, serta penyajian data yang sudah diolah ke lapisan frontend. Dukungan native terhadap TypeScript juga menjamin konsistensi tipe data antara sisi frontend dan backend yang sama-sama menggunakan TypeScript, sehingga mengurangi risiko runtime error yang berasal dari ketidaksesuaian kontrak data antar lapisan.
+
+2.2.8  PostgreSQL
+
+PostgreSQL adalah sistem manajemen basis data relasional sumber terbuka yang dikenal karena kestabilan, kepatuhan terhadap standar SQL, serta dukungan terhadap fitur lanjutan seperti transaksi ACID, foreign key constraint, indexing multi-kolom, hingga ekstensibilitas yang memungkinkan penambahan tipe data. Properti ACID (Atomicity, Consistency, Isolation, Durability) sangat berguna untuk operasi penyimpanan data pada aplikasi yang melibatkan perubahan beberapa data sekaligus sehingga harus dieksekusi secara atomik.
+Pada dashboard monitoring mahasiswa wali, PostgreSQL digunakan untuk menyimpan data yang dikelola oleh aplikasi itu sendiri, seperti data konfigurasi notifikasi per dosen wali, riwayat notifikasi yang telah dikirimkan, serta data preferensi tampilan dashboard. Sifat relasional yang kuat dari PostgreSQL memungkinkan pengelolaan relasi antar entitas seperti dosen wali, mahasiswa binaan, dan konfigurasi notifikasi secara terstruktur dengan integritas referensial yang terjaga. Hal tersebut menjadikan PostgreSQL sebagai pilihan yang tepat untuk menyimpan data yang dihasilkan dan dikelola oleh aplikasi, sementara data akademik utama tetap diambil secara langsung dari sistem informasi akademik PENS melalui REST API.
+2.2.9  Pemantauan Non-Akademik dan Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM)
+Pemantauan non-akademik merupakan bagian dari pendampingan mahasiswa yang menitikberatkan pada keaktifan mahasiswa dalam kegiatan di luar perkuliahan, seperti keikutsertaan dalam organisasi, kepanitiaan, pelatihan, serta perolehan prestasi non-akademik. Di PENS, capaian kegiatan tersebut diukur melalui Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM), yaitu satuan yang digunakan untuk mengukur keikutsertaan mahasiswa dalam kegiatan ekstrakurikuler dan menjadi salah satu syarat kelulusan bagi mahasiswa program Sarjana Terapan di PENS [12].
+Karena perolehan SKEM bersifat akumulatif sepanjang masa studi, pemantauan capaian SKEM secara berkala penting dilakukan agar mahasiswa tidak terhambat kelulusannya akibat kekurangan SKEM pada akhir masa studi. Oleh karena itu, dashboard monitoring mahasiswa wali perlu menyertakan komponen pemantauan capaian non-akademik agar dosen wali dapat mengidentifikasi dan mengingatkan mahasiswa binaan yang perolehan SKEM-nya masih berada di bawah ambang batas yang ditetapkan.
+2.2.10  Tes Psikologi dan Integrasi Antar-Sistem
+Tes psikologi merupakan instrumen pengukuran kondisi psikologis individu yang dapat menggambarkan aspek seperti minat, bakat, kepribadian, serta kecenderungan kondisi mental seseorang. Dalam konteks pendampingan akademik, pemahaman terhadap kondisi psikologis mahasiswa dapat membantu dosen wali memberikan bimbingan yang lebih tepat sasaran, karena permasalahan akademik mahasiswa kerap berkaitan dengan kondisi psikologis yang dialaminya [13].
+Pada proyek akhir ini, data hasil tes psikologi tidak dihasilkan oleh dashboard, melainkan diperoleh dari sistem proyek akhir lain yang secara khusus mengembangkan layanan tes psikologi mahasiswa. Integrasi antar-sistem dilakukan melalui REST API, sehingga hasil tes psikologi dapat ditampilkan berdampingan dengan data akademik mahasiswa pada dashboard. Pendekatan integrasi ini sejalan dengan prinsip arsitektur berorientasi layanan, di mana setiap sistem berdiri secara independen namun dapat saling bertukar data melalui antarmuka yang terdefinisi dengan baik [5].
+
+2.3   PENELITIAN TERKAIT
+
+Tinjauan terhadap penelitian terdahulu pada bagian ini dikelompokkan ke dalam empat kategori yang masing-masing relevan dengan komponen utama sistem yang diusulkan, yaitu pengembangan dashboard monitoring akademik berbasis web, implementasi REST API pada sistem informasi perguruan tinggi, penerapan mekanisme notifikasi otomatis pada sistem akademik, serta pengembangan antarmuka pengguna berbasis React.js. Pengelompokan tersebut memungkinkan pemetaan posisi orisinal penelitian ini secara lebih jelas, dengan menunjukkan elemen-elemen mana yang sudah dieksplorasi pada penelitian terdahulu serta celah yang menjadi fokus kontribusi penelitian ini. Bagian akhir tinjauan menyajikan tabel analisis kesenjangan (gap analysis) yang membandingkan cakupan penelitian terdahulu dengan cakupan proyek akhir ini.
+
+2.3.1  Pengembangan Dashboard Monitoring Akademik
+
+Pengembangan dashboard monitoring untuk keperluan akademik telah menjadi area penelitian yang aktif seiring meningkatnya kebutuhan institusi pendidikan akan sistem pemantauan yang lebih efisien dan berbasis data. Ilhamsyah dan Rahmayudha [1] merancang model dashboard untuk monitoring evaluasi mahasiswa yang berfokus pada penyajian data kinerja jurusan secara agregat melalui antarmuka visual terpusat. Penelitian tersebut menunjukkan bahwa penyajian data akademik dalam bentuk visualisasi grafis mampu meningkatkan efisiensi pengambilan keputusan akademik dibandingkan laporan konvensional. Namun, cakupan penelitian tersebut terbatas pada pemantauan data agregat per jurusan, bukan pemantauan individual per dosen wali, sehingga tidak membahas kebutuhan spesifik dosen wali dalam meninjau kondisi akademik setiap mahasiswa binaannya secara individual.
+Diharja dkk. [3] melakukan evaluasi komprehensif terhadap keberhasilan implementasi sistem informasi manajemen di berbagai perguruan tinggi, yang menyimpulkan bahwa faktor kritis keberhasilan sistem tersebut adalah kemampuan menyediakan informasi yang relevan dan tepat waktu kepada pengguna. Temuan tersebut secara implisit mengonfirmasi pentingnya fitur pemantauan kondisi akademik secara real-time bagi dosen wali, namun penelitian tersebut bersifat evaluatif terhadap sistem yang sudah ada dan tidak menawarkan rancangan teknis spesifik untuk sistem perwalian berbasis dashboard interaktif.
+
+2.3.2  Implementasi REST API pada Sistem Informasi Perguruan Tinggi
+
+Penerapan REST API sebagai antarmuka integrasi antar sistem informasi di perguruan tinggi telah menunjukkan manfaat yang signifikan dalam beberapa penelitian terkini. Ayu dkk. [5] mengimplementasikan RESTful API pada sistem informasi manajemen dosen Universitas Udayana yang membuktikan bahwa standarisasi antarmuka data melalui REST API mampu mempercepat pertukaran data antar subsistem akademik dan mengurangi ketergantungan pada proses manual. Penelitian tersebut memberikan validasi empiris yang kuat terhadap pendekatan integrasi berbasis REST API yang digunakan pada proyek akhir ini, namun lingkupnya terbatas pada pengelolaan data dosen dan tidak mencakup pemantauan kondisi akademik mahasiswa secara individual untuk keperluan dosen wali.
+Ramadhan dan Zukhri [6] memperkuat argumen tersebut dengan menunjukkan bahwa pengembangan REST API menggunakan pendekatan yang terstruktur menghasilkan layanan yang modular, mudah dikembangkan, dan memiliki kontrak data yang konsisten. Penelitian tersebut juga mendemonstrasikan bahwa pemisahan yang jelas antara lapisan API dan lapisan antarmuka pengguna memungkinkan kedua lapisan berkembang secara independen. Prinsip pemisahan tersebut relevan dengan arsitektur yang dirancang pada proyek akhir ini, di mana lapisan dashboard berbasis React.js dan lapisan backend berbasis NestJS dikembangkan sebagai komponen yang berkomunikasi melalui antarmuka REST API yang terdefinisi dengan baik.
+
+2.3.3  Sistem Notifikasi Otomatis pada Lingkungan Akademik
+
+Penerapan notifikasi otomatis pada sistem informasi akademik telah terbukti efektif dalam mengurangi keterlambatan penanganan permasalahan akademik. Putriyani dkk. [2] menyimpulkan bahwa ketiadaan integrasi antara sistem-sistem informasi akademik yang terpisah menyebabkan keterlambatan informasi yang berdampak langsung pada efisiensi administrasi dan kualitas layanan kepada mahasiswa. Temuan tersebut secara implisit menunjukkan bahwa mekanisme notifikasi yang terhubung dengan data akademik terpusat merupakan komponen penting dalam sistem informasi akademik yang efektif, meskipun penelitian tersebut tidak secara eksplisit merancang sistem notifikasi.
+Jubaedi dkk. [4] secara langsung mendemonstrasikan manfaat nyata notifikasi otomatis pada konteks pemantauan akademik melalui implementasi sistem monitoring absensi siswa dengan notifikasi melalui WhatsApp. Hasil penelitian tersebut menunjukkan bahwa notifikasi proaktif berbasis kondisi akademik secara signifikan mempercepat respons dosen atau wali terhadap permasalahan yang terdeteksi. Namun, penelitian tersebut berfokus pada konteks pemantauan absensi di tingkat sekolah dengan saluran notifikasi melalui platform eksternal, sehingga belum mengeksplorasi integrasi notifikasi berbasis kondisi akademik komprehensif yang menjadi cakupan penelitian ini, seperti kondisi nilai rendah, tren penurunan IPK, dan status semester antara.
+
+2.3.4  Antarmuka Pengguna Berbasis React.js
+
+Penggunaan React.js sebagai fondasi antarmuka pengguna pada sistem informasi akademik telah mendapatkan dukungan empiris yang kuat dari berbagai penelitian. Komperla dkk. [7] melakukan tinjauan menyeluruh terhadap ekosistem dan kapabilitas React.js yang menyimpulkan bahwa mekanisme virtual DOM, arsitektur berbasis komponen, dan ekosistem pustaka yang luas menjadikan React.js sebagai pilihan yang matang dan terbukti untuk membangun antarmuka pengguna yang kompleks dan dinamis. Tinjauan tersebut juga menegaskan bahwa React.js memiliki dukungan komunitas yang aktif dan ekosistem pustaka pihak ketiga yang kaya, sehingga kebutuhan teknis spesifik seperti visualisasi data, manajemen state, dan integrasi dengan backend dapat dipenuhi melalui pustaka yang sudah teruji.
+
+Pada konteks dashboard monitoring mahasiswa wali, arsitektur berbasis komponen React.js memungkinkan pembangunan komponen-komponen visualisasi yang terisolasi dan dapat digunakan kembali, seperti komponen grafik IPK, komponen tabel mahasiswa bermasalah, dan komponen panel notifikasi. Kemampuan tersebut memudahkan pengembangan dan pemeliharaan antarmuka dashboard yang memiliki banyak bagian visual berbeda namun perlu bekerja secara terintegrasi dalam satu halaman.
+
+Perbandingan penelitian serupa dengan penelitian yang diusulkan dapat dilihat pada tabel 2.1 berikut ini:
+
+Tabel 2.1. Perbandingan penelitian
+
+No
+Judul Penelitian
+Masalah yang Diangkat
+Fitur Utama
+1
+Perancangan Model Dashboard untuk Monitoring Evaluasi Mahasiswa
+Pemantauan evaluasi akademik mahasiswa yang masih dilakukan secara manual dan tidak terintegrasi dalam satu platform terpusat
+Model dashboard untuk memvisualisasikan data kinerja akademik mahasiswa secara agregat per jurusan
+2
+Analisis Literatur Tentang Peran Sistem Informasi Akademik dalam Meningkatkan Efisiensi Administrasi di Institusi Perguruan Tinggi
+Data akademik tersebar di berbagai sistem tanpa integrasi, menjadi hambatan utama efisiensi administrasi perguruan tinggi
+Kajian sistematis tentang peran integrasi sistem informasi akademik terhadap efisiensi pengelolaan administrasi perguruan tinggi
+3
+Perancangan dan Implementasi RESTful API pada Sistem Informasi Manajemen Dosen Universitas Udayana
+Pertukaran data antar-sistem di perguruan tinggi yang masih lambat karena belum menggunakan antarmuka API standar
+Implementasi RESTful API pada sistem informasi manajemen dosen yang mempercepat pertukaran data antar subsistem akademik
+4
+Pengembangan REST API Sistem UIIAdmisi dengan Menggunakan Pendekatan Domain Driven Design
+Pengelolaan sistem informasi penerimaan mahasiswa yang tidak terstruktur dan sulit dikembangkan akibat tidak menggunakan pendekatan desain yang tepat
+Pengembangan REST API berbasis Domain Driven Design pada sistem penerimaan mahasiswa yang menghasilkan struktur layanan yang modular dan mudah dikembangkan
+5
+React: A Detailed Survey
+Kebutuhan akan tinjauan komprehensif terhadap ekosistem dan kapabilitas React sebagai pustaka antarmuka modern yang banyak digunakan
+Tinjauan menyeluruh terhadap arsitektur, fitur, dan ekosistem React.js sebagai pustaka JavaScript untuk membangun antarmuka pengguna berbasis komponen
+6
+Proyek Akhir Ini
+Data akademik mahasiswa wali tersebar di berbagai sistem, dosen wali tidak dapat memantau kondisi mahasiswa binaan secara terpusat, tidak tersedia visualisasi IPK, informasi semester antara tidak terintegrasi, dan tidak ada notifikasi otomatis, serta capaian non-akademik (SKEM) dan kondisi psikologis mahasiswa yang belum terpantau secara terintegrasi
+Dashboard web terpadu yang mengintegrasikan data akademik mahasiswa wali melalui REST API, dilengkapi visualisasi grafik IPK per semester, fitur pemantauan mahasiswa bermasalah, informasi semester antara, dan notifikasi otomatis berbasis React.js, pemantauan capaian non-akademik (SKEM), serta integrasi hasil tes psikologi dari sistem proyek akhir lain
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BAB 3
+DESKRIPSI SISTEM
+
+
+3.1   DESKRIPSI SOLUSI
+
+Penelitian proyek akhir ini mengajukan suatu pendekatan terpadu untuk menyelesaikan persoalan fragmentasi data dan keterbatasan pemantauan akademik dalam sistem perwalian di PENS dengan mengembangkan Dashboard Monitoring Mahasiswa Wali PENS berbasis web. Sistem ini dirancang sebagai platform terpusat yang mengintegrasikan data akademik mahasiswa dari sistem informasi akademik PENS melalui REST API, kemudian menyajikannya dalam bentuk visualisasi data interaktif yang dapat diakses oleh dosen wali secara langsung melalui antarmuka web.
+Solusi yang ditawarkan memiliki beberapa fitur unggulan yang membedakannya dari sistem perwalian yang ada saat ini. Pertama, sistem menyediakan fitur tinjauan nilai semester sebelumnya yang terintegrasi langsung dalam alur persetujuan KRS, sehingga dosen wali dapat membuat keputusan persetujuan berdasarkan data akademik yang lengkap dan akurat tanpa harus berpindah ke sistem lain. Fitur ini menjawab persoalan mendasar yang selama ini terjadi, yaitu proses persetujuan KRS yang berlangsung tanpa pertimbangan akademik yang memadai [2].
+Kedua, sistem dilengkapi fitur pemantauan mahasiswa bermasalah yang secara otomatis mengidentifikasi mahasiswa binaan dengan kondisi akademik kritis, seperti nilai di bawah ambang batas atau tingkat kehadiran yang rendah. Daftar mahasiswa bermasalah ditampilkan dalam tabel interaktif yang dapat difilter berdasarkan jenis permasalahan, semester, dan rentang waktu, sehingga dosen wali dapat mengambil tindakan bimbingan secara tepat sasaran.
+Ketiga, sistem menghadirkan visualisasi grafik IPK per semester untuk setiap mahasiswa binaan. Grafik garis interaktif yang menampilkan tren perkembangan IPK memungkinkan dosen wali mendeteksi penurunan prestasi akademik sejak dini sebelum permasalahan berkembang lebih serius, sejalan dengan temuan penelitian terdahulu bahwa pemantauan tren akademik berbasis data visual terbukti meningkatkan efektivitas bimbingan [3].
+Keempat, sistem mengintegrasikan informasi mahasiswa yang sedang menempuh semester antara ke dalam satu tampilan yang mudah diakses, sehingga dosen wali tidak perlu melakukan pengecekan manual ke bagian administrasi untuk memperoleh informasi tersebut.
+Kelima, sistem menyediakan mekanisme notifikasi otomatis berbasis kondisi akademik yang secara proaktif menginformasikan dosen wali ketika terdapat mahasiswa binaan yang memerlukan perhatian khusus. Notifikasi dikelola di dalam antarmuka dashboard dan dapat dikonfigurasi oleh dosen wali sesuai ambang batas yang ditetapkan. Pendekatan notifikasi proaktif ini sejalan dengan temuan Jubaedi dkk. [4] yang membuktikan bahwa notifikasi otomatis secara signifikan mengurangi keterlambatan penanganan permasalahan akademik.
+Keenam, sistem menyediakan fitur pemantauan capaian non-akademik berupa perolehan Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM) setiap mahasiswa binaan. Dengan fitur ini, dosen wali dapat memantau sejauh mana mahasiswa telah memenuhi syarat SKEM untuk kelulusan dan mengingatkan mahasiswa yang capaiannya masih kurang [12].
+Ketujuh, sistem mengintegrasikan hasil tes psikologi mahasiswa yang bersumber dari sistem proyek akhir lain melalui REST API. Dengan demikian, dosen wali dapat meninjau kondisi psikologis mahasiswa binaan secara berdampingan dengan kondisi akademiknya, sehingga pendampingan dapat dilakukan secara lebih menyeluruh [13].
+Seluruh fitur tersebut dibangun di atas tumpukan teknologi modern yang terdiri dari React.js sebagai lapisan antarmuka pengguna, NestJS sebagai lapisan backend, PostgreSQL sebagai basis data aplikasi, serta integrasi dengan REST API sistem informasi akademik PENS yang sudah ada. Pendekatan arsitektur ini memastikan sistem dapat dikembangkan secara modular dan tidak mengganggu sistem sumber yang sedang berjalan.
+
+3.2   DESAIN SISTEM
+
+Desain Secara keseluruhan, Dashboard Monitoring Mahasiswa Wali PENS dirancang dengan arsitektur yang terbagi menjadi tiga bagian utama, yaitu sisi klien (client-side), sisi peladen (server-side), dan sistem sumber eksternal (external). Sisi klien merupakan antarmuka berbasis web yang menjadi titik interaksi dosen wali dengan sistem, berkomunikasi dengan peladen melalui protokol HTTPS untuk pertukaran data umum. Sisi peladen berperan sebagai pusat pemrosesan yang menjembatani seluruh komponen, didukung oleh PostgreSQL sebagai basis data aplikasi. Adapun sistem sumber eksternal mencakup sistem informasi akademik PENS yang sudah ada, dari mana data akademik mahasiswa diambil melalui REST API tanpa mengubah sistem sumber tersebut. Gambar 3.2 menyajikan pandangan menyeluruh terhadap arsitektur sistem, yang selanjutnya diuraikan secara lebih rinci pada sub-bab berikutnya berdasarkan masing-masing bagian. Selain sistem informasi akademik PENS, sistem sumber eksternal juga mencakup sistem tes psikologi yang dikembangkan pada proyek akhir lain, yang menyediakan data hasil tes psikologi mahasiswa melalui REST API.
+
+
+Gambar 3.2 Desain Sistem
+
+3.2.1   Sisi Klien
+
+Sisi klien merupakan antarmuka berbasis web yang menjadi titik interaksi utama antara dosen wali dan dashboard monitoring. Antarmuka ini dibangun sebagai Single Page Application (SPA) menggunakan React.js, sehingga seluruh interaksi dosen wali berlangsung dalam satu halaman yang dimuat sekali di awal dan diperbarui secara dinamis tanpa perlu memuat ulang halaman ketika dosen wali berpindah antar fitur. Pendekatan SPA dipilih karena dashboard menuntut interaksi yang intensif dan responsif, terutama pada aktivitas memantau daftar mahasiswa bermasalah, menelusuri grafik IPK per mahasiswa, serta memeriksa notifikasi kondisi akademik. Gambar 3.2 menyajikan potongan arsitektur pada sisi klien beserta hubungannya dengan peladen.
+
+
+Gambar 3.2. Arsitektur sisi klien
+
+Berdasarkan teknologi yang telah diuraikan pada Bab 2, antarmuka ini disusun dari beberapa komponen utama yang saling bekerja sama. Komponen visualisasi data dibangun menggunakan pustaka Recharts yang menyediakan komponen grafik garis dan grafik batang berbasis React.js, sehingga tren IPK per semester dan distribusi nilai mahasiswa dapat dirender secara reaktif setiap kali data diperbarui. Pengelolaan state dibagi menjadi dua tanggung jawab, yaitu client state yang menangani kondisi antarmuka seperti filter aktif pada tabel mahasiswa bermasalah dan tab yang sedang ditampilkan, serta server state yang ditangani oleh TanStack Query untuk mengelola data akademik yang diambil dari peladen dengan mekanisme cache otomatis berbasis query key per identifikasi mahasiswa atau semester. Pemisahan tersebut menjaga antarmuka tetap responsif sekaligus memastikan data tetap tersedia ketika dosen wali berpindah antar halaman tanpa perlu permintaan ulang ke peladen.
+Komunikasi antara sisi klien dan peladen berlangsung melalui HTTPS dengan pola request-response untuk seluruh pertukaran data, termasuk pengambilan data nilai, presensi, grafik IPK, informasi semester antara, serta pengelolaan notifikasi. Peladen merespons setiap permintaan dengan data yang sudah diolah dan siap ditampilkan oleh komponen React, sehingga sisi klien tidak perlu berinteraksi langsung dengan sistem informasi akademik PENS.
+
+3.2.2 Sisi Peladen
+
+Sisi peladen berperan sebagai pusat pemrosesan dashboard yang menjembatani permintaan dari sisi klien dengan seluruh komponen pendukung di belakangnya. Peladen dibangun menggunakan NestJS yang menangani berbagai tanggung jawab utama, mulai dari autentikasi dosen wali, pengambilan dan pengolahan data akademik dari sistem informasi akademik PENS melalui REST API, pengelolaan logika deteksi mahasiswa bermasalah, pengelolaan notifikasi otomatis, hingga penyajian data yang sudah diolah kepada sisi klien. Gambar 3.2.2 menyajikan potongan arsitektur sisi peladen beserta komponen-komponen yang terhubung dengannya.
+
+
+Gambar 3.2.2 Arsitektur sisi peladen
+
+Penulisan Peladen menerapkan arsitektur modular NestJS dengan modul-modul yang terpisah sesuai tanggung jawabnya masing-masing. Modul autentikasi menangani proses verifikasi identitas dosen wali sebelum akses ke data akademik mahasiswa diizinkan. Modul akademik bertanggung jawab mengambil data nilai, presensi, dan informasi semester antara dari sistem informasi akademik PENS melalui REST API, kemudian mengolah data tersebut ke dalam struktur yang sesuai untuk ditampilkan pada dashboard. Modul pemantauan berisi logika penentuan kondisi akademik kritis, yaitu evaluasi apakah nilai atau tingkat kehadiran seorang mahasiswa berada di bawah ambang batas yang ditetapkan, sehingga mahasiswa tersebut teridentifikasi sebagai mahasiswa bermasalah. Modul notifikasi mengelola konfigurasi ambang batas per dosen wali, mencatat riwayat notifikasi yang telah dikirimkan, serta menentukan kapan notifikasi baru perlu dibangkitkan berdasarkan kondisi akademik mahasiswa binaan. Seluruh modul tersebut didukung oleh PostgreSQL sebagai basis data aplikasi yang menyimpan data yang dikelola oleh dashboard itu sendiri, terpisah dari data akademik utama yang tetap bersumber dari sistem informasi akademik PENS.
+
+3.3 USE CASE DIAGRAM
+
+Use case diagram menggambarkan interaksi antara dosen wali dengan dashboard monitoring dari sudut pandang fungsional, yaitu fungsi-fungsi apa saja yang dapat diakses tanpa memerinci bagaimana fungsi tersebut diimplementasikan. Sesuai dengan batasan penelitian yang berfokus pada kebutuhan dosen wali sebagai pengguna utama, diagram ini melibatkan satu aktor utama yaitu Dosen Wali. Gambar 3.5 menyajikan use case diagram Dashboard Monitoring Mahasiswa Wali PENS.
+
+
+Gambar 3.3 Use case diagram 
+
+Dosen Wali dapat mengakses sembilan fungsi utama pada dashboard. Pertama, fungsi Autentikasi yang mencakup proses Login sebagai pintu masuk dosen wali ke dalam sistem. Kedua, fungsi Lihat Daftar Mahasiswa Binaan yang menampilkan seluruh mahasiswa binaan beserta ringkasan kondisi akademik masing-masing. Ketiga, fungsi Tinjau Nilai Semester saat Persetujuan KRS yang memungkinkan dosen wali mengakses data nilai semester sebelumnya secara langsung dalam konteks proses persetujuan pengambilan SKS, sehingga keputusan persetujuan dapat didasarkan pada kondisi akademik yang lengkap. Keempat, fungsi Pantau Mahasiswa Bermasalah yang menyajikan daftar mahasiswa binaan yang teridentifikasi memiliki kondisi akademik kritis berdasarkan ambang batas yang ditetapkan. Kelima, fungsi Lihat Grafik IPK Per Semester yang menampilkan visualisasi tren perkembangan IPK setiap mahasiswa binaan secara individual. Keenam, fungsi Lihat Informasi Semester Antara yang menampilkan daftar mahasiswa binaan yang sedang menempuh semester antara. Kesembilan, fungsi Kelola Notifikasi yang memungkinkan dosen wali mengatur konfigurasi ambang batas notifikasi, melihat riwayat notifikasi, serta menandai notifikasi sebagai sudah ditindaklanjuti. Kedelapan, fungsi Pantau Capaian Non-Akademik (SKEM) yang menampilkan perolehan Satuan Kredit Ekstrakurikuler Mahasiswa setiap mahasiswa binaan beserta status pemenuhan syarat kelulusan non-akademik. Kesembilan, fungsi Lihat Hasil Tes Psikologi yang menampilkan hasil tes psikologi mahasiswa binaan yang diperoleh dari sistem proyek akhir lain melalui integrasi REST API.
+Beberapa fungsi utama memiliki keterkaitan dengan fungsi lain melalui relasi include dan extend. Fungsi Pantau Mahasiswa Bermasalah memiliki relasi include dengan Lihat Detail Kondisi Akademik Mahasiswa, yang menunjukkan bahwa penelusuran detail kondisi merupakan bagian integral dari alur pemantauan, serta relasi extend dengan Filter Berdasarkan Jenis Masalah yang bersifat opsional ketika dosen wali ingin menyaring tampilan berdasarkan kategori permasalahan tertentu seperti nilai rendah atau kehadiran buruk. Adapun fungsi Kelola Notifikasi memiliki relasi extend dengan Atur Ambang Batas Notifikasi dan Tandai Notifikasi sebagai Ditindaklanjuti, di mana keduanya merupakan tindakan opsional yang dapat dipilih dosen wali saat mengelola notifikasi.
+
+3.4 DESAIN DATABASE
+
+Basis data dashboard dirancang menggunakan PostgreSQL dengan struktur relasional yang terdiri dari enam tabel utama. Gambar 3.4 menyajikan rancangan skema basis data beserta relasi antar tabel. Perlu ditegaskan bahwa basis data ini hanya menyimpan data yang dihasilkan dan dikelola oleh dashboard itu sendiri, seperti konfigurasi notifikasi dan riwayat notifikasi, sedangkan data akademik utama seperti nilai, presensi, dan IPK tetap bersumber dari sistem informasi akademik PENS melalui REST API dan tidak disimpan secara permanen di basis data ini.
+
+
+Gambar 3.4 Desain ERD Database
+
+Basis Basis data dashboard terdiri dari enam tabel utama yang masing-masing memiliki peran spesifik dalam mendukung fungsionalitas sistem.
+Tabel dosen_wali menyimpan data identitas dosen wali yang memiliki akses ke dashboard, meliputi NIP, nama, dan kredensial autentikasi. Tabel ini menjadi titik pusat relasi karena seluruh data konfigurasi dan notifikasi dikaitkan dengan identitas dosen wali.
+Tabel mahasiswa menyimpan data identitas mahasiswa binaan yang terdaftar dalam sistem, seperti NRP dan nama. Data akademik seperti nilai dan presensi tidak disimpan di sini, melainkan diambil secara langsung dari REST API sistem informasi akademik PENS setiap kali diperlukan.
+Tabel krs mencatat relasi antara dosen wali dan mahasiswa binaan, yaitu mahasiswa mana saja yang berada di bawah bimbingan dosen wali tertentu. Tabel ini memungkinkan sistem data nilai dan kehadiran.
+Tabel notifikasi mencatat setiap notifikasi yang dibangkitkan oleh sistem berdasarkan kondisi akademik mahasiswa binaan yang melanggar ambang batas yang telah dikonfigurasi. Setiap entri mencakup jenis kondisi yang memicu notifikasi, identitas mahasiswa yang bersangkutan, waktu pembangkitan, dan status tindak lanjut.
+Tabel riwayat_tindak_lanjut menyimpan catatan tindakan yang telah diambil oleh dosen wali terhadap notifikasi yang diterima, sehingga dosen wali dapat menelusuri kembali penanganan yang pernah dilakukan untuk setiap permasalahan akademik mahasiswa binaannya.
+Tabel skem menyimpan rekapitulasi perolehan Satuan Kredit Ekstrakurikuler Mahasiswa (SKEM) setiap mahasiswa binaan beserta status pemenuhan syarat kelulusan non-akademik. Tabel ini memungkinkan dosen wali memantau capaian non-akademik mahasiswa dan mengidentifikasi mahasiswa yang perolehan SKEM-nya masih kurang.
+Seluruh relasi antar tabel dikelola dengan foreign key constraint untuk menjaga integritas referensial data, sehingga tidak ada notifikasi yang merujuk pada mahasiswa atau dosen wali yang tidak terdaftar dalam sistem. Properti ACID pada PostgreSQL memastikan bahwa operasi seperti pencatatan notifikasi baru dan pembaruan status tindak lanjut berlangsung secara atomik tanpa risiko inkonsistensi data. Adapun data hasil tes psikologi mahasiswa tidak disimpan dalam basis data ini, melainkan diambil secara langsung dari sistem proyek akhir lain melalui REST API setiap kali diperlukan, sehingga dashboard tetap berperan sebagai konsumen data tanpa menduplikasi sumber data psikologi.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DAFTAR PUSTAKA
+
+[1]Ilhamsyah dan S. Rahmayudha, "Perancangan Model Dashboard untuk Monitoring Evaluasi Mahasiswa," Jurnal Informatika: Jurnal Pengembangan IT (JPIT), vol. 2, no. 1, hal. 13â€“17, Jan. 2017. doi: 10.30591/jpit.v2i1.436.
+[2]R. Hidayat, A. Syukur, dan S. Santosa, "Rancang Bangun Sistem Informasi Monitoring Akademik Mahasiswa Berbasis Web untuk Mendukung Keberhasilan Studi," Jurnal Teknologi Informasi dan Ilmu Komputer (JTIIK), vol. 9, no. 2, hal. 375â€“384, Apr. 2022. doi: 10.25126/jtiik.202292543.
+[3]D. Apriansyah, M. Tabrani, dan A. Aini, "Sistem Monitoring Presensi dan Nilai Mahasiswa Berbasis Web sebagai Upaya Pencegahan Drop Out," Jurnal Ilmiah Komputer dan Informatika (KOMPUTA), vol. 11, no. 1, hal. 45â€“53, Mar. 2022. doi: 10.34010/komputa.v11i1.6192.
+[4]A. D. Jubaedi, S. Dwiyatno, E. Krisnaningsih, Solihin, A. Sutiawan, dan A. Shafitri, "Sistem Informasi Monitoring Kegiatan Absensi Siswa dengan Notifikasi WhatsApp," Jurnal Sistem Informasi (JSiI), vol. 10, no. 2, hal. 109â€“115, Sep. 2023. doi: 10.30656/jsii.v10i2.6630.
+[5]I. G. A. Ayu, K. P. Paramitha, D. M. Wiharta, dan I. M. A. Suyadnya, "Perancangan dan Implementasi RESTful API pada Sistem Informasi Manajemen Dosen Universitas Udayana," Jurnal SPEKTRUM, vol. 9, no. 3, hal. 15â€“23, Sep. 2022. doi: 10.24843/SPEKTRUM.2022.v09.i03.p3.
+[6]M. F. Ramadhan dan Z. Zukhri, "Pengembangan REST API Sistem UIIAdmisi dengan Menggunakan Pendekatan Domain Driven Design," Jurnal Ilmiah Informatika, vol. 11, no. 2, hal. 88â€“97, Sep. 2023. doi: 10.33884/jif.v11i2.8017.
+[7]V. Komperla, P. Deenadhayalan, P. Ghuli, dan R. Pattar, "React: A Detailed Survey," Indonesian Journal of Electrical Engineering and Computer Science, vol. 26, no. 3, hal. 1679â€“1686, Jun. 2022. doi: 10.11591/ijeecs.v26.i3.pp1679-1686.
+[8]I. Putriyani dan B. B. Sugiharto, â€œAnalisis Literatur Tentang Peran Sistem Informasi Akademik dalam Meningkatkan Efisiensi Administrasi di Institusi Perguruan Tinggi,â€ J-CEKI: Jurnal Cendekia Ilmiah, vol. 4, no. 1, hal. 2283â€“2289, Des. 2024. doi: 10.56799/jceki.v4i1.5881. [Online]. Available: https://doi.org/10.56799/jceki.v4i1.5881
+[9]N. Novinaldi, B. Harto, E. N. Azandra, Y. Suherman, dan L. S. Aini, â€œSistem Informasi Monitoring Siswa Berbasis Web pada MTsN 1 Padang,â€ Jurnal Pustaka Data, vol. 5, no. 1, hal. 170â€“175, 2025. doi: 10.55382/jurnalpustakadata.v5i1.977. [Online]. Available: https://doi.org/10.55382/jurnalpustakadata.v5i1.977
+[10]A. A. Nabila dan A. Jananto, â€œSistem Informasi Monitoring Perkembangan Prestasi Akademik dan Wanprestasi Siswa Berbasis Web,â€ Jurnal Ilmu Multidisiplin, vol. 4, no. 2, hal. 688â€“697, Jun. 2025. doi: 10.38035/jim.v4i2.923. [Online]. Available: https://doi.org/10.38035/jim.v4i2.923
+[11]A. A. Azis, â€œRancangan Sistem Monitoring Siswa Berbasis Web dengan Metode Waterfall,â€ Jurnal Informatika dan Teknik Elektro Terapan (JITET), vol. 13, no. 3, 2025. doi: 10.23960/jitet.v13i3.6676. [Online]. Available: https://doi.org/10.23960/jitet.v13i3.6676
+[12]	Politeknik Elektronika Negeri Surabaya, "Peraturan Direktur Politeknik Elektronika Negeri Surabaya Nomor 1 Tahun 2023 tentang Peraturan Akademik," PENS, Surabaya, 2023.
+[13]	T. Susilowati, "Peran Dosen Pembimbing Akademik (PA) terhadap Prestasi Belajar Mahasiswa," Majalah Ilmiah Ilmu Pengetahuan Sosial (MIIPS), vol. 8, no. 2, hal. 57â€“65, 2008.
+[14]	F. D. Pranatasari, "Pengaruh Mentoring Dosen Pembimbing Akademik terhadap Prestasi Akademik Mahasiswa," Business Management Journal, vol. 12, no. 2, hal. 95â€“112, 2016. doi: 10.30813/bmj.v12i2.432.
+[15]	Direktorat Jenderal Pendidikan Tinggi, Riset, dan Teknologi, Statistik Pendidikan Tinggi (Higher Education Statistics) 2023. Jakarta: Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi, 2023.

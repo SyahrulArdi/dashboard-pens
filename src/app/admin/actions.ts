@@ -129,3 +129,46 @@ export async function deleteJadwalKuliah(id: string) {
   if (error) throw new Error(error.message);
   revalidatePath("/admin");
 }
+
+// ================= SEMESTER ANTARA =================
+export async function getAllSemesterAntara() {
+  const { data, error } = await supabaseAdmin
+    .from("semester_antara")
+    .select(`
+      *,
+      mahasiswa (nrp, nama, program_studi),
+      semester_antara_matkul (
+        kode_mk,
+        mata_kuliah (nama_mk, sks)
+      )
+    `)
+    .order("dibuat_pada", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function addSemesterAntara(data: { mahasiswa_id: string, tahun_akademik: string, keterangan: string, matkul: string[] }) {
+  const { data: sa, error } = await supabaseAdmin.from("semester_antara").insert({
+    mahasiswa_id: data.mahasiswa_id,
+    tahun_akademik: data.tahun_akademik,
+    keterangan: data.keterangan
+  }).select().single();
+  
+  if (error) throw new Error(error.message);
+
+  if (data.matkul.length > 0) {
+    const matkulData = data.matkul.map((kode_mk) => ({
+      semester_antara_id: sa.id,
+      kode_mk
+    }));
+    await supabaseAdmin.from("semester_antara_matkul").insert(matkulData);
+  }
+
+  revalidatePath("/admin/semester-antara");
+}
+
+export async function deleteSemesterAntara(id: string) {
+  const { error } = await supabaseAdmin.from("semester_antara").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/semester-antara");
+}

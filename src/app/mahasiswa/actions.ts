@@ -4,14 +4,13 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
 export async function getProfilMahasiswa(mahasiswaId: string) {
-  // Join mahasiswa with perwalian to get dosen wali name
   const { data, error } = await supabaseAdmin
     .from("mahasiswa")
     .select(`
       *,
       perwalian (
         dosen_wali (
-          nama, nip, email
+          id, nama, nip, email
         )
       )
     `)
@@ -72,14 +71,18 @@ export async function submitKRS(formData: any) {
       {
         mahasiswa_id: formData.mahasiswa_id,
         semester: formData.semester,
-        file_krs_url: formData.file_krs_url,
-        pesan_mahasiswa: formData.pesan_mahasiswa,
-        status_persetujuan: "PENDING"
+        catatan_mahasiswa: formData.pesan_mahasiswa,
+        status: "MENUNGGU",
       }
     ])
     .select();
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    if (error.code === '23505') {
+      throw new Error("KRS untuk semester ini sudah pernah diajukan.");
+    }
+    throw new Error(error.message);
+  }
   
   // Create notification for Dosen Wali
   if (formData.dosen_wali_id) {

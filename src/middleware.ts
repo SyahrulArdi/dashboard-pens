@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export async function middleware(req: NextRequest) {
-  // Fix: Explicitly set secureCookie on production environments (Vercel)
-  // because getToken might fail to find the __Secure-next-auth.session-token
   const secureCookie = process.env.NODE_ENV === "production" || process.env.NEXT_PUBLIC_VERCEL_ENV === "production";
   
   const token = await getToken({
@@ -14,12 +12,28 @@ export async function middleware(req: NextRequest) {
 
   const path = req.nextUrl.pathname;
 
-  // Jika belum login, redirect ke halaman login
+  // Izinkan akses bebas ke assets dan api (biasanya sudah di-exclude matcher, tapi just in case)
+  if (path.startsWith("/api") || path.startsWith("/_next") || path.includes(".")) {
+    return NextResponse.next();
+  }
+
+  // Jika BELUM login
   if (!token) {
+    if (path === "/login" || path === "/") {
+      return NextResponse.next();
+    }
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
   const role = token.role as string;
+
+  // Jika SUDAH login tapi mencoba buka halaman /login atau root /, arahkan langsung ke dashboardnya
+  if (path === "/login" || path === "/") {
+    if (role === "admin") return NextResponse.redirect(new URL("/admin", req.url));
+    if (role === "dosen_wali") return NextResponse.redirect(new URL("/dosenwali", req.url));
+    if (role === "mahasiswa") return NextResponse.redirect(new URL("/mahasiswa", req.url));
+    if (role === "ppks") return NextResponse.redirect(new URL("/ppks", req.url));
+  }
 
   // Proteksi rute admin
   if (path.startsWith("/admin") && role !== "admin") {
@@ -45,5 +59,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/dosenwali/:path*", "/mahasiswa/:path*", "/ppks/:path*"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|logo.png).*)"],
 };
