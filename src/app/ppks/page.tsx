@@ -81,9 +81,9 @@ export default async function PPKSDashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="col-span-2 shadow-sm border border-slate-200 dark:border-slate-800">
+        <Card className="col-span-2 shadow-sm border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
           <CardHeader>
-            <CardTitle>Ringkasan Informasi</CardTitle>
+            <CardTitle className="text-slate-900 dark:text-slate-50">Ringkasan Informasi</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="prose dark:prose-invert max-w-none text-slate-600 dark:text-slate-400">

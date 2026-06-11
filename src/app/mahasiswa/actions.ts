@@ -4,21 +4,29 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
 export async function getProfilMahasiswa(mahasiswaId: string) {
-  const { data, error } = await supabaseAdmin
+  const { data: profil, error: profilError } = await supabaseAdmin
     .from("mahasiswa")
+    .select("*")
+    .eq("id", mahasiswaId)
+    .maybeSingle();
+
+  if (profilError) throw new Error(profilError.message);
+  if (!profil) return null;
+
+  const { data: perwalianData } = await supabaseAdmin
+    .from("perwalian")
     .select(`
-      *,
-      perwalian (
-        dosen_wali (
-          id, nama, nip, email
-        )
+      dosen_wali (
+        id, nama, nip, email
       )
     `)
-    .eq("id", mahasiswaId)
-    .single();
+    .eq("mahasiswa_id", mahasiswaId)
+    .eq("status_aktif", true);
 
-  if (error) throw new Error(error.message);
-  return data;
+  return {
+    ...profil,
+    perwalian: perwalianData || [],
+  };
 }
 
 export async function getNilaiMahasiswa(mahasiswaId: string) {
@@ -84,7 +92,6 @@ export async function submitKRS(formData: any) {
     throw new Error(error.message);
   }
   
-  // Create notification for Dosen Wali
   if (formData.dosen_wali_id) {
     await supabaseAdmin.from("notifikasi").insert([
       {

@@ -182,7 +182,7 @@ export default function PPKSClient({ data }: { data: any[] }) {
                 <div>
                   <p className="text-xs text-slate-500 mb-1">Deskripsi Laporan</p>
                   <p className="text-sm text-slate-700 dark:text-slate-300 italic bg-white dark:bg-slate-950 p-2 rounded border border-slate-100 dark:border-slate-800">
-                    "{selectedLaporan.deskripsi}"
+                    &ldquo;{selectedLaporan.deskripsi}&rdquo;
                   </p>
                 </div>
               </div>

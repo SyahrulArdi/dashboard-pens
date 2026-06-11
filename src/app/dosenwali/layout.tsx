@@ -2,6 +2,7 @@
 
 import { ReactNode, useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -44,7 +45,7 @@ const navItems = [
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -62,6 +63,25 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      const userId = (session.user as any)?.id;
+      const role = (session.user as any)?.role;
+      if (!userId || role !== "dosen_wali") {
+        signOut({ callbackUrl: "/login" });
+        return;
+      }
+      fetch(`/api/validate-user?id=${userId}&role=${role}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.exists) {
+            signOut({ callbackUrl: "/login" });
+          }
+        })
+        .catch(() => {});
+    }
+  }, [status, session]);
 
   if (!isMounted) return null;
 
@@ -81,8 +101,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           {isSidebarOpen ? (
             <>
               <div className="flex items-center gap-3 flex-1 overflow-hidden">
-                <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center text-lg font-bold shadow-lg flex-shrink-0">
-                  P
+                <div className="relative w-10 h-10 flex-shrink-0">
+                  <Image src="/logo.png" alt="Logo PENS" fill className="object-contain" priority />
                 </div>
                 <div className="flex flex-col overflow-hidden">
                   <span className="text-xl font-bold tracking-wide text-white whitespace-nowrap">Wali PENS</span>
@@ -117,7 +137,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           )}
           <nav className="space-y-2 px-3">
             {navItems.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const isActive = pathname === item.href || (pathname.startsWith(`${item.href}/`) && item.href !== "/dosenwali");
               return (
                 <Link key={item.href} href={item.href}>
                   <span className={cn(
@@ -174,8 +194,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       >
         <div className="h-20 flex items-center border-b border-slate-800 px-4 justify-between">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center text-lg font-bold shadow-lg flex-shrink-0">
-              P
+            <div className="relative w-10 h-10 flex-shrink-0">
+              <Image src="/logo.png" alt="Logo PENS" fill className="object-contain" priority />
             </div>
             <div className="flex flex-col overflow-hidden">
               <span className="text-xl font-bold tracking-wide text-white whitespace-nowrap">Wali PENS</span>
@@ -196,7 +216,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
           <nav className="space-y-2 px-3">
             {navItems.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const isActive = pathname === item.href || (pathname.startsWith(`${item.href}/`) && item.href !== "/dosenwali");
               return (
                 <Link key={item.href} href={item.href} onClick={() => setIsSidebarOpen(false)}>
                   <span className={cn(

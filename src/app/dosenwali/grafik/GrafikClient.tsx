@@ -52,7 +52,7 @@ export default function GrafikClient({ mahasiswaList }: { mahasiswaList: Mahasis
     jumlah: nilaiData?.filter((n) => n.nilai_huruf === huruf).length ?? 0,
   }));
 
-  // Hitung tren IPK (naik/turun)
+  
   const trendIcon = () => {
     if (!ipkHistory || ipkHistory.length < 2) return <Minus className="h-4 w-4 text-slate-400" />;
     const last = ipkHistory[ipkHistory.length - 1].ipk;
@@ -72,7 +72,6 @@ export default function GrafikClient({ mahasiswaList }: { mahasiswaList: Mahasis
 
   return (
     <div className="space-y-6">
-      {/* Selector Mahasiswa */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="w-full sm:w-80">
           <label className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1 block">Pilih Mahasiswa</label>
@@ -111,7 +110,6 @@ export default function GrafikClient({ mahasiswaList }: { mahasiswaList: Mahasis
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Grafik IPK & IPS per Semester */}
         <Card className="shadow-sm glass-panel border-none">
           <CardHeader>
             <CardTitle>Tren IPK & IPS per Semester</CardTitle>
@@ -135,7 +133,7 @@ export default function GrafikClient({ mahasiswaList }: { mahasiswaList: Mahasis
                     <YAxis domain={[0, 4]} tick={{ fontSize: 12 }} />
                     <Tooltip
                       contentStyle={{ borderRadius: "8px", fontSize: "13px" }}
-                      formatter={(value: number) => [value.toFixed(2)]}
+                      formatter={(value: any) => [Number(value).toFixed(2)]}
                     />
                     <Legend />
                     <Line
@@ -163,7 +161,6 @@ export default function GrafikClient({ mahasiswaList }: { mahasiswaList: Mahasis
           </CardContent>
         </Card>
 
-        {/* Grafik Distribusi Nilai */}
         <Card className="shadow-sm glass-panel border-none">
           <CardHeader>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
